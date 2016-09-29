@@ -1,0 +1,3 @@
+[submodule "src\\mxbuild\\sub"]
+	path = src\\mxbuild\\sub
+	url = https://github.com/kingces95/mxbuild
