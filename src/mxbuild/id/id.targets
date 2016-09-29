@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Build" 
+    DependsOnTargets="RefreshEnlistmentInfo" 
+    Returns="$(TargetResult)" 
+  />
+  <Target Name="Clean" >
+    <Delete
+      Files="
+        @(BuildNumberFile);
+        @(EnlistmentStatusFile);
+        @(EnlistmentRevisionFile);
+        @(EnlistmentUrlFile);
+        @(EnlistmentBranchFile);
+      "
+    />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+  <!--RefreshEnlistmentInfo-->
+  <Target
+    Name="RefreshEnlistmentInfo"
+    DependsOnTargets="
+      _GetBuildVersion;
+      _GetBuildNumber;
+      _GetEnlistmentRevision;
+      _GetEnlistmentUrl;
+      _GetEnlistmentBranch;
+    ">
+
+    <!--propagate $(BuildNumber), $(EnlistmentRevision), $(EnlistmentUrl)-->
+    <PropertyGroup>
+      <TargetResult>$(TargetResult)BuildMajorVersion=$(BuildMajorVersion);</TargetResult>
+      <TargetResult>$(TargetResult)BuildMinorVersion=$(BuildMinorVersion);</TargetResult>
+      <TargetResult>$(TargetResult)BuildNumber=$(BuildNumber);</TargetResult>
+      <TargetResult>$(TargetResult)EnlistmentRevision=$(EnlistmentRevision);</TargetResult>
+      <TargetResult>$(TargetResult)EnlistmentUrl=$(EnlistmentUrl);</TargetResult>
+      <TargetResult>$(TargetResult)EnlistmentBranch=$(EnlistmentBranch);</TargetResult>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetBuildVersion">
+      <Error Condition="!Exists($(BuildVersionFile))" Text="Expected file '$(BuildVersionFile)' to exist." />
+
+    <ReadLinesFromFile File="$(BuildVersionFile)">
+      <Output TaskParameter="Lines" PropertyName="BuildMajorMinorVersion" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <BuildMajorVersion>$(BuildMajorMinorVersion.Split('.')[0])</BuildMajorVersion>
+      <BuildMinorVersion>$(BuildMajorMinorVersion.Split('.')[1])</BuildMinorVersion>
+    </PropertyGroup>
+
+    <Message Importance="$(Verbosity)" Text="BuildMajorVersion: $(BuildMajorVersion)"/>
+    <Message Importance="$(Verbosity)" Text="BuildMinorVersion: $(BuildMinorVersion)"/>
+  </Target>
+
+</Project>

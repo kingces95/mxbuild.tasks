@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  DefaultTargets="Build" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+>
+  <Import Project="$(MxbuildDir)root.props"/>
+
+  <PropertyGroup>
+    <NuspecAuthors>kingces95</NuspecAuthors>
+    <NuspecOwners>$(NuspecAuthors)</NuspecOwners>
+    <NuspecRequireLicenseAcceptance>false</NuspecRequireLicenseAcceptance>
+    <NuspecCopyright>Copyright 2016</NuspecCopyright>
+    <NuspecLicenseUrl>https://opensource.org/licenses/MIT</NuspecLicenseUrl>
+    <NuspecIconUrl>http://findicons.com/files/icons/2711/free_icons_for_windows8_metro/64/crown.png</NuspecIconUrl>
+  </PropertyGroup>
+  
+  <!--shim-->
+  <PropertyGroup>
+    <ShimInclude>$(ShimDir)**\*.csproj</ShimInclude>
+    <ShimExclude>$(ShimDir)**\Mxbuild.Debug.csproj</ShimExclude>
+    <IsBuildTargetBuild Condition="'$(BuildTarget)'=='build' OR '$(BuildTarget)'=='rebuild'">true</IsBuildTargetBuild>
+    <IsBuildingFromRoot Condition="'$(StartupDir)'=='$(RootDir)'">true</IsBuildingFromRoot>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsBuildTargetBuild)'=='true' AND '$(IsBuildingFromRoot)'=='true'">
+    <ShimInitialProject>$(IdProj)</ShimInitialProject>
+    <ShimFinalProject>$(PublishProj)</ShimFinalProject>
+  </PropertyGroup>
+
+</Project>

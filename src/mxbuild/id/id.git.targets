@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <Target Name="_GetBuildNumber">
+    <Error Condition="!Exists($(BuildVersionFile))" Text="Expected file '$(BuildVersionFile)' to exist." />
+
+    <PropertyGroup>
+      <BuildNumber>0</BuildNumber>
+    </PropertyGroup>
+    
+    <Exec
+      Command="git log -n 1 --pretty=format:%%h $(BuildVersionFile)"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="BuildVersonFileLastRevision" />
+    </Exec>
+
+    <Exec
+      Command="git rev-list --count $(BuildVersonFileLastRevision)^^..HEAD"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+      Condition="'$(BuildVersonFileLastRevision)'!=''"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="BuildNumber" />
+    </Exec>
+
+    <Message Importance="$(Verbosity)" Text="BuildNumber: $(BuildNumber) -> $(BuildNumberFile)"/>
+    <MakeDir Directories="@(BuildNumberFile->'%(RootDir)%(Directory)')" />
+    <WriteLinesToFile
+      File="@(BuildNumberFile)"
+      Lines="$(BuildNumber)"
+    />
+  </Target>
+
+  <Target Name="_GetEnlistmentRevision" >
+    <Exec
+      Command="git rev-list -n 1 head"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="EnlistmentRevision" />
+    </Exec>
+
+    <Message Importance="$(Verbosity)" Text="EnlistmentRevision: $(EnlistmentRevision) -> $(EnlistmentRevisionFile)"/>
+    <MakeDir Directories="@(EnlistmentRevisionFile->'%(RootDir)%(Directory)')" />
+    <WriteLinesToFile
+      File="@(EnlistmentRevisionFile)"
+      Lines="$(EnlistmentRevision)"
+    />
+  </Target>
+
+  <Target Name="_GetEnlistmentBranch" >
+    <Exec
+      Command="git rev-parse --abbrev-ref head"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="EnlistmentBranch" />
+    </Exec>
+
+    <Message Importance="$(Verbosity)" Text="EnlistmentBranch: $(EnlistmentBranch) -> $(EnlistmentBranchFile)"/>
+    <MakeDir Directories="@(EnlistmentBranchFile->'%(RootDir)%(Directory)')" />
+    <WriteLinesToFile
+      File="@(EnlistmentBranchFile)"
+      Lines="$(EnlistmentBranch)"
+    />
+  </Target>
+
+  <Target Name="_GetEnlistmentUrl" >
+    <Exec
+      Command="for /F $(Quot)tokens=*$(Quot) %%i in ('git remote') do git remote get-url %%i"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="EnlistmentUrl" />
+    </Exec>
+
+    <Message Importance="$(Verbosity)" Text="EnlistmentUrl: $(EnlistmentUrl) -> $(EnlistmentUrlFile)"/>
+    <MakeDir Directories="@(EnlistmentUrlFile->'%(RootDir)%(Directory)')" />
+    <WriteLinesToFile
+      File="@(EnlistmentUrlFile)"
+      Lines="$(EnlistmentUrl)"
+    />
+  </Target>
+</Project>

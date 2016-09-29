@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Build" DependsOnTargets="Publish" />
+  <Target Name="Clean" />
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+  <!--Publish-->
+  <Target Name="Publish"
+    DependsOnTargets="
+      _PublishFailIfDirty;
+      _PublishByVersionNumber;
+      _PublishByRevisionNumber;
+    "
+  />
+
+  <!--_PublishFailIfDirty-->
+  <Target 
+    Name="_PublishFailIfDirty"
+    DependsOnTargets="_GetEnlistmentStatus"
+  >
+    <PropertyGroup>
+      <IsEnlistmentClean Condition="'$(EnlistmentStatus)'==''">true</IsEnlistmentClean>
+    </PropertyGroup>
+
+    <Error 
+      Condition="'$(IsEnlistmentClean)'!='true'" 
+      Text="Publish aborted; Repository dirty at time of build. Set IsEnlistmentClean=true to override. See: @(EnlistmentStatusFile)" 
+    />
+  </Target>
+
+  <!--_PublishByVersionNumber-->
+  <Target
+    Name="_PublishByVersionNumber"
+    DependsOnTargets="_PublishByRevisionNumber"
+    Condition="'$(IsEnlistmentClean)'=='true' AND '$(BuildVersion)'!=''"
+  >
+    <Warning
+      Condition="Exists($(BuildVersionDir))"
+      Text="Publication directory '$(BuildVersionDir)' already exists. Removing exising directory."
+    />
+    <RemoveDir Condition="Exists($(BuildVersionDir))" Directories="$(BuildVersionDir)" />
+
+    <Message Importance="high" Text="$(BuildVersionDir) -> $(BuildRevisionDir)" />
+    <MakeDir Directories="$(BuildByVersionDir)" />
+    <Exec Command="mklink /J $(BuildVersionDir) $(BuildRevisionDir) >NUL" />
+  </Target>
+
+  <!--_PublishByRevisionNumber-->
+  <Target
+    Name="_PublishByRevisionNumber"
+    Condition="'$(IsEnlistmentClean)'=='true'"
+  >
+    <Warning
+      Condition="Exists($(BuildRevisionDir))"
+      Text="Publication directory '$(BuildRevisionDir)' already exists. Removing existing directory."
+    />
+    <RemoveDir Condition="Exists($(BuildRevisionDir))" Directories="$(BuildRevisionDir)" />
+
+    <Message Importance="high" Text="$(BuildBinDir) -> $(BuildRevisionDir)" />
+    <ItemGroup>
+      <_BuildFiles Include="$(BuildBinDir)**" />
+    </ItemGroup>
+    <MakeDir Directories="$(BuildByRevisionDir)" />
+    <Copy SourceFiles="@(_BuildFiles)" DestinationFolder="$(BuildRevisionDir)%(RecursiveDir)" />
+  </Target>
+</Project>

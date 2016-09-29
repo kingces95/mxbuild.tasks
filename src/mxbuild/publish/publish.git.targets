@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="_GetEnlistmentStatus" >
+    <Exec
+      Command="git status --porcelain"
+      WorkingDirectory="$(RootDir)"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="normal"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="EnlistmentStatus" />
+    </Exec>
+
+    <Message Importance="$(Verbosity)" Text="EnlistmentStatus: status -> $(EnlistmentStatusFile)"/>
+    <MakeDir Directories="@(EnlistmentStatusFile->'%(RootDir)%(Directory)')" />
+    <WriteLinesToFile
+      File="@(EnlistmentStatusFile)"
+      Lines="$(EnlistmentStatus)"
+      Overwrite="true"
+    />
+  </Target>
+
+</Project>

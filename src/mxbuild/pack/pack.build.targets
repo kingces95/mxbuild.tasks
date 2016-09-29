@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="4.0"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+>
+  <Import Project="$(MxbuildDir)empty.targets" />
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      _CopyBuildContent;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="_CopyBuildContent">
+    <ItemGroup>
+      <BuildContent Include="$(ProjDir)**\*"/>
+      <BuildContent Remove="$(ProjFile)"/>
+      <BuildContent Remove="$(ProjDir)nuspec.props"/>
+    </ItemGroup>
+
+    <Message Importance="high" Text="$(ProjName)\**\* -> $(OutDirAbsolute)" />
+    <Copy
+      SourceFiles="@(BuildContent)"
+      DestinationFolder="$(OutDirAbsolute)%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+    />
+    <ItemGroup>
+      <TargetResult Include="$(OutDirAbsolute)**\*" />
+    </ItemGroup>
+  </Target>
+
+</Project>

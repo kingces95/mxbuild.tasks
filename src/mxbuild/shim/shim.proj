@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project 
+  ToolsVersion="12.0" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .pre.props))\.pre.props" />
+  
+  <PropertyGroup>
+    <ShimDir Condition="'$(ShimDir)'==''">$(StartupDir)</ShimDir>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(ShimDir), .props))\.props" />
+
+  <PropertyGroup>
+    <ProjectGuid>{0410505A-9E46-48B7-A1A1-ACA80AEA0013}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ShimReference Include="$(ShimReference)" />
+    <Configuration Include="$(Configuration)"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ShimProjectFiles
+      Include="$(ShimInclude)"
+      Exclude="$(ShimExclude)"
+    />
+  </ItemGroup>
+
+  <!--shim state-->
+  <PropertyGroup>
+    <ShimInitialFinalTargetId>initialFinal</ShimInitialFinalTargetId>
+    <ShimLoggingTargetId>logging</ShimLoggingTargetId>
+  </PropertyGroup>
+
+  <!--shim command line-->
+  <Import Project="$(MxbuildDir)common.targets" />
+  <Import Project="$(MxbuildDir)empty.targets" />
+  <Import Project="$(MxbuildDir)proxy.targets" />
+  <Import Project="shim.targets" />
+</Project>

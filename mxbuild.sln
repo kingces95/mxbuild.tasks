@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "mxbuild", "mxbuild.shproj", "{7DC1069B-AC9A-4EF9-94C5-4DA4473016D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F5C9C67E-E461-495E-A348-32DC094DFC69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Tasks", "src\mxbuild.tasks\Mxbuild.Tasks.csproj", "{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild", "src\mxbuild\Mxbuild.csproj", "{C7E13E31-E333-4835-94B6-435D5B6F7817}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Debug", "src\msbuild.debug\Mxbuild.Debug.csproj", "{5920E95B-2329-470E-9EA6-7131BB2AA95A}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		mxbuild.projitems*{7dc1069b-ac9a-4ef9-94c5-4da4473016d1}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|[None] = Debug|[None]
+		Debug|Desktop = Debug|Desktop
+		Debug|Pack = Debug|Pack
+		Release|[None] = Release|[None]
+		Release|Desktop = Release|Desktop
+		Release|Pack = Release|Pack
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|[None].ActiveCfg = Debug|[None]
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Desktop.ActiveCfg = Debug|Desktop
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Desktop.Build.0 = Debug|Desktop
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Pack.ActiveCfg = Debug|Pack
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Pack.Build.0 = Debug|Pack
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|[None].ActiveCfg = Release|[None]
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Desktop.ActiveCfg = Release|Desktop
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Desktop.Build.0 = Release|Desktop
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Pack.ActiveCfg = Release|Pack
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Pack.Build.0 = Release|Pack
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Debug|[None].ActiveCfg = Debug|[None]
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Debug|Desktop.ActiveCfg = Debug|Desktop
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Debug|Desktop.Build.0 = Debug|Desktop
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Debug|Pack.ActiveCfg = Debug|Pack
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Debug|Pack.Build.0 = Debug|Pack
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Release|[None].ActiveCfg = Release|[None]
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Release|Desktop.ActiveCfg = Release|Desktop
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Release|Desktop.Build.0 = Release|Desktop
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Release|Pack.ActiveCfg = Release|Pack
+		{C7E13E31-E333-4835-94B6-435D5B6F7817}.Release|Pack.Build.0 = Release|Pack
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|[None].ActiveCfg = Debug|[None]
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|[None].Build.0 = Debug|[None]
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|Desktop.ActiveCfg = Debug|Desktop
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|Desktop.Build.0 = Debug|Desktop
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|Pack.ActiveCfg = Debug|Desktop
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|[None].ActiveCfg = Release|[None]
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|[None].Build.0 = Release|[None]
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Desktop.ActiveCfg = Release|Desktop
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Desktop.Build.0 = Release|Desktop
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Pack.ActiveCfg = Release|Desktop
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
+		{C7E13E31-E333-4835-94B6-435D5B6F7817} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
+	EndGlobalSection
+EndGlobal

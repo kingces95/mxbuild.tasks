@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MetaProjectGuid>{31928A03-4286-4294-B986-D31B43B5342F}</MetaProjectGuid>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <!--
+  
+    Properties
+  -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .pre.props))\.pre.props" />
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
+  <PropertyGroup>
+    <ProjectGuid>{C7E13E31-E333-4835-94B6-435D5B6F7817}</ProjectGuid>
+  </PropertyGroup>
+  <!--
+  
+    None
+  -->
+  <PropertyGroup Condition=" '$(Platform)' == '[None]' " />
+  <!--
+  
+    Nuget Pack
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Pack' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Pack' " />
+  <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <Import Project="nuspec.props" Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <ItemGroup Condition="'$(Plat)' == '$(PackPlatformId)' ">
+    <SelfReference Include="$(BuildContentPlatformId)" />
+  </ItemGroup>  
+  <!--
+  
+    Nuget Build Content
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Build' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Build' " />
+  <!--
+  
+    References; Source
+  -->
+  <ItemGroup>
+    <None Include="clean\clean.pre.props" />
+    <None Include="clean\clean.targets" />
+    <None Include="common.pre.props" />
+    <None Include="common.props" />
+    <None Include="common.targets" />
+    <None Include="debug.targets" />
+    <None Include="empty.targets" />
+    <None Include="gen\gen.pre.props" />
+    <None Include="gen\gen.targets" />
+    <None Include="id\id.git.targets" />
+    <None Include="id\id.pre.props" />
+    <None Include="id\id.proj" />
+    <None Include="id\id.props" />
+    <None Include="id\id.targets" />
+    <None Include="meta\meta.post.props" />
+    <None Include="meta\meta.pre.props" />
+    <None Include="meta\meta.props" />
+    <None Include="meta\meta.targets" />
+    <None Include="node\node.pre.props" />
+    <None Include="node\node.props" />
+    <None Include="node\node.targets" />
+    <None Include="nuget\nuget.post.props" />
+    <None Include="nuget\nuget.pre.props" />
+    <None Include="nuget\nuget.props" />
+    <None Include="nuget\nuget.targets" />
+    <None Include="nuspec.props" />
+    <None Include="pack\pack.post.props" />
+    <None Include="pack\pack.pre.props" />
+    <None Include="pack\pack.props" />
+    <None Include="pack\pack.targets" />
+    <None Include="part\part.pre.props" />
+    <None Include="part\part.props" />
+    <None Include="part\part.targets" />
+    <None Include="proxy.targets" />
+    <None Include="publish\publish.git.targets" />
+    <None Include="publish\publish.pre.props" />
+    <None Include="publish\publish.proj" />
+    <None Include="publish\publish.targets" />
+    <None Include="root.pre.props" />
+    <None Include="root.props" />
+    <None Include="root.targets" />
+    <None Include="shell\env.bat" />
+    <None Include="shell\shell.proj" />
+    <None Include="shell\vcvarsallShim.bat" />
+    <None Include="shim\shim.pre.props" />
+    <None Include="shim\shim.proj" />
+    <None Include="shim\shim.targets" />
+    <None Include="xf\xf.post.props" />
+    <None Include="xf\xf.pre.props" />
+    <None Include="xf\xf.props" />
+    <None Include="xf\xf.targets" />
+    <None Include="shell\doskey.txt" />
+  </ItemGroup>
+  <!--
+
+    Targets
+  -->
+  <Target Name="build">
+    <Message Importance="high" Text="no build!" />
+    <Message Importance="high" Text="TargetProject: $(TargetProject)" />
+    <Message Importance="high" Text="Plat: $(Plat)" />
+    <Message Importance="high" Text="ContentPlatformId: $(ContentPlatformId)" />
+    <Message Importance="high" Text="DefineConstants: $(DefineConstants)" />
+    <Message Importance="high" Text="DefineConstants: $(DefineConstants)" />
+  </Target>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .targets))\.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
