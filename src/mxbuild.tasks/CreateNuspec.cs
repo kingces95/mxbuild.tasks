@@ -10,13 +10,18 @@ using System.Diagnostics;
 
 namespace Xamarin.Forms.Build {
     public sealed class CreateNuspec : AbstractTask {
-        static MessageImportance DefaultMessageImportance = MessageImportance.Normal;
+        private const string BuildTargetFramework = "build";
+        private const string LibSubDir = "lib";
+        private const string LibraryExtension = ".dll";
 
-        static class Meta {
+        private static MessageImportance DefaultMessageImportance = MessageImportance.Normal;
+
+        private static class Meta {
             internal static string Version = nameof(Version);
             internal static string TargetFramework = nameof(TargetFramework);
+            internal static string Extension = nameof(Extension);
         }
-        static class X {
+        private static class X {
             internal static XName Package = (CammelCase)nameof(Package);
             internal static XName Metadata = (CammelCase)nameof(Metadata);
             internal static XName Id = (CammelCase)nameof(Id);
@@ -107,7 +112,7 @@ namespace Xamarin.Forms.Build {
                     new XElement(X.References,
                         from reference in References
                         let targetFramework = reference.GetMetadata(Meta.TargetFramework)
-                        where targetFramework != "build"
+                        where targetFramework != BuildTargetFramework
                         group reference by targetFramework into grp
                         select new XElement(X.Group,
                             string.IsNullOrEmpty(grp.Key) ? null : new XAttribute(X.TargetFramework, grp.Key),
@@ -118,21 +123,18 @@ namespace Xamarin.Forms.Build {
                         )
                     )
                 ),
-
                 new XElement(X.Files,
                     from reference in References
                     let targetFramework = reference.GetMetadata(Meta.TargetFramework)
-                    let src = Path.GetDirectoryName(reference.ItemSpec)
-                    let target = targetFramework == "build" ? "build" : $"lib\\{targetFramework}"
+                    let isBuild = targetFramework != BuildTargetFramework
+                    let source = outputUir.MakeRelativeUri(new Uri(reference.ItemSpec)).NormalizeSlashes()
+                    let target = GetNuspecTargetPath(outputUir, reference)
                     select new XElement(X.File,
-                        new XAttribute(X.Src, outputUir
-                            .MakeRelativeUri(new Uri(src + "/**/*"))
-                            .NormalizeSlashes()
-                        ),
+                        new XAttribute(X.Src, source),
                         new XAttribute(X.Target, target)
                     )
                 )
-            );
+           );
 
             var fileName = Path.GetFileName(OutputPath);
             Log.LogMessage(DefaultMessageImportance, $"{fileName} -> {OutputPath}");
@@ -140,6 +142,23 @@ namespace Xamarin.Forms.Build {
             Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
 
             package.Save(OutputPath);
+        }
+
+        private IEnumerable<ITaskItem> LibraryReferences() {
+            return References.Where(o => 
+                string.Compare(o.GetMetadata(Meta.Extension), LibraryExtension, ignoreCase: true) == 0
+            );
+        }
+
+        private string GetNuspecTargetPath(Uri outDir, ITaskItem reference) {
+            var nuspecPath = outDir.MakeRelativeUri(new Uri(reference.ItemSpec)).NormalizeSlashes();
+
+            var targetFramework = reference.GetMetadata(Meta.TargetFramework);
+            var isBuild = targetFramework == BuildTargetFramework;
+            if (!isBuild)
+                nuspecPath = Path.Combine(LibSubDir, nuspecPath);
+
+            return nuspecPath;
         }
     }
 }
