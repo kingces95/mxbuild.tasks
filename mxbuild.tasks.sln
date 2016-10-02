@@ -9,7 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F5C9C67E-E46
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Tasks", "src\mxbuild.tasks\Mxbuild.Tasks.csproj", "{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Debug", "src\msbuild.debug\Mxbuild.Debug.csproj", "{5920E95B-2329-470E-9EA6-7131BB2AA95A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Debug", "src\mxbuild.debug\Mxbuild.Debug.csproj", "{5920E95B-2329-470E-9EA6-7131BB2AA95A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mxbuild.Tasks.Test", "src\mxbuild.tasks.test\Mxbuild.Tasks.Test.csproj", "{C4C3E202-9A8A-4424-9167-514101DB2459}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -44,6 +46,16 @@ Global
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Desktop.ActiveCfg = Release|Desktop
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Desktop.Build.0 = Release|Desktop
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Pack.ActiveCfg = Release|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|[None].ActiveCfg = Debug|[None]
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|[None].Build.0 = Debug|[None]
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Desktop.ActiveCfg = Debug|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Desktop.Build.0 = Debug|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Pack.ActiveCfg = Debug|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|[None].ActiveCfg = Release|[None]
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|[None].Build.0 = Release|[None]
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Desktop.ActiveCfg = Release|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Desktop.Build.0 = Release|Desktop
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Pack.ActiveCfg = Release|Desktop
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +63,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
+		{C4C3E202-9A8A-4424-9167-514101DB2459} = {F5C9C67E-E461-495E-A348-32DC094DFC69}
 	EndGlobalSection
 EndGlobal

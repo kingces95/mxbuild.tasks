@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <group id="%(Items0.Identity)">
+    <element>%(Element)</element>
+    <cdata><![CDATA[%(Cdata)]]></cdata>
+    <attribute attribute="%(Attribute)" />
+  </group>
+  <group id="%(Items1.Identity)" />
+  <group id="%(Items2.Identity)">
+    <element>%(Element)</element>
+    <cdata><![CDATA[%(Cdata)]]></cdata>
+    <attribute attribute="%(Attribute)" />
+  </group>
+</root>

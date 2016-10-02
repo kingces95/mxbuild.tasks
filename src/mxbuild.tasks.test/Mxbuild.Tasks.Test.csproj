@@ -4,74 +4,52 @@
     <MetaProjectGuid>{31928A03-4286-4294-B986-D31B43B5342F}</MetaProjectGuid>
     <OutputType>Library</OutputType>
   </PropertyGroup>
-  <!--
-  
-    Properties
-  -->
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .pre.props))\.pre.props" />
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
   <PropertyGroup>
-    <ProjectGuid>{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}</ProjectGuid>
+    <ProjectGuid>{C4C3E202-9A8A-4424-9167-514101DB2459}</ProjectGuid>
   </PropertyGroup>
-  <!--
-  
-    None
-  -->
   <PropertyGroup Condition=" '$(Platform)' == '[None]' " />
-  <!--
-  
-    Nuget Pack
-  -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Pack' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Pack' " />
-  <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
-  <Import Project="nuspec.props" Condition=" '$(Plat)' == '$(PackPlatformId)' " />
-  <ItemGroup Condition="'$(Plat)' == '$(PackPlatformId)' ">
-    <SelfReference Include="$(DesktopLibraryPlatformId)" />
-  </ItemGroup>
-  <!--
-  
-    Desktop
-  -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Desktop' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Desktop' " />
-  <!--
-  
-    References; Source
-  -->
+  <ItemGroup>
+    <ProjectReference Include="..\mxbuild.tasks\Mxbuild.Tasks.csproj">
+      <Project>{8e9c4286-1afb-48a6-ab17-180e14f47a9e}</Project>
+      <Name>Mxbuild.Tasks</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="AbstractTask.cs" />
-    <Compile Include="Tasks\ExpandXmlTemplate.cs" />
-    <Compile Include="Tasks\RegexReplace.cs" />
-    <Compile Include="Tasks\RegexMatches.cs" />
-    <Compile Include="Tasks\WriteLineToFile.cs" />
-    <Compile Include="Tasks\DumpTaskItems.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Tasks\CreateNuspec.cs" />
+    <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <Import Project="$(RefDir)NUnit.props" />
   <ItemGroup>
-    <None Include="nuspec.props" />
     <None Include="tasks.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
+    </None>
+    <None Include="test.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <!--
-
-    Targets
-  -->
+  <ItemGroup>
+    <Content Include="template.expected.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="template.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .targets))\.targets" />
 </Project>
