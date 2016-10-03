@@ -5,15 +5,6 @@
 >
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., .props))\.props" />
 
-  <!--BuildInfo-->
-  <ItemGroup>
-    <Template Include="$(SrcDir)BuildInfo.tcs">
-      <DependentUpon>BuildInfo.cs</DependentUpon>
-    </Template>
-    <Compile Include="$(SrcDir)BuildInfo.cs" />
-    <Compile Include="$(SrcDir)AssemblyVersion.cs" />
-  </ItemGroup>
-
   <PropertyGroup>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>

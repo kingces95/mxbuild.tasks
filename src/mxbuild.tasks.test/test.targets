@@ -39,13 +39,35 @@
       <attribute>attribute 1.1</attribute>
     </Items1>
   </ItemGroup>
+
+  <Target Name="DiffFiles" DependsOnTargets="Log" >
+    <Diff 
+      SourceFiles="$(SourceFiles)" 
+      TargetFiles="$(TargetFiles)"
+      TargetFolder="$(TargetFolder)"
+      IgnoreLastWriteTime="$(IgnoreLastWriteTime)"
+    >
+      <Output ItemName="DifferentSourceFiles" TaskParameter="DifferentSourceFiles" />
+      <Output ItemName="DifferentTargetFiles" TaskParameter="DifferentTargetFiles" />
+      <Output ItemName="SameSourceFiles" TaskParameter="SameSourceFiles" />
+      <Output ItemName="SameTargetFiles" TaskParameter="SameTargetFiles" />
+      <Output ItemName="SameTargetFiles" TaskParameter="SameTargetFiles" />
+      <Output PropertyName="IsDifferent" TaskParameter="IsDifferent" />
+    </Diff>
+
+    <Message Text="DifferentSourceFiles: @(DifferentSourceFiles)" />
+    <Message Text="DifferentTargetFiles: @(DifferentTargetFiles)" />
+    <Message Text="SameSourceFiles: @(SameSourceFiles)" />
+    <Message Text="SameTargetFiles: @(SameTargetFiles)" />
+    <Message Text="IsDifferent: $(IsDifferent)" />
+  </Target>
   
   <Target Name="ExpandXmlTemplate" DependsOnTargets="Log" >
     <PropertyGroup>
       <TemplateText>$([System.IO.File]::ReadAllText("template.xml"))</TemplateText>
     </PropertyGroup>
 
-    <!--find variables of form: $(Name)-->
+    <!--find variables of form: %(Name)-->
     <RegexMatches
       Input="$(TemplateText)"
       Pattern="(?&lt;=[%][(])\w*?(?=[.]\w*[)])"
@@ -69,6 +91,6 @@
     </ExpandXmlTemplate>
 
     <Message Importance="high" Text="$(Expansion)"/>
-</Target>
-
+  </Target>
+  
 </Project>

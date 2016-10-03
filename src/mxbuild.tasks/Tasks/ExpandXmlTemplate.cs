@@ -1,11 +1,9 @@
 ﻿using System.Linq;
-using Microsoft.Build.Utilities;
 using Microsoft.Build.Framework;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
-using System.IO;
 using System;
 
 namespace Mxbuild.Tasks {

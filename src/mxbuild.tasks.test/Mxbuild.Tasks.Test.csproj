@@ -4,52 +4,107 @@
     <MetaProjectGuid>{31928A03-4286-4294-B986-D31B43B5342F}</MetaProjectGuid>
     <OutputType>Library</OutputType>
   </PropertyGroup>
+  <!--
+  
+    Properties
+  -->
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .pre.props))\.pre.props" />
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
+  <!--
+  
+    Universal
+  -->
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <PropertyGroup>
     <ProjectGuid>{C4C3E202-9A8A-4424-9167-514101DB2459}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">Desktop</Platform>
   </PropertyGroup>
+  <!--
+  
+    None
+  -->
   <PropertyGroup Condition=" '$(Platform)' == '[None]' " />
+  <!--
+  
+    Desktop
+  -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Desktop' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Desktop' " />
-  <ItemGroup>
+  <Import Project="$(RefDir)NUnit.props" />
+  <ItemGroup Condition="'$(MetaPlatform)'=='Desktop'">
+    <!--
+      project references
+    -->
     <ProjectReference Include="..\mxbuild.tasks\Mxbuild.Tasks.csproj">
       <Project>{8e9c4286-1afb-48a6-ab17-180e14f47a9e}</Project>
       <Name>Mxbuild.Tasks</Name>
       <Private>True</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <!--
+      references
+    -->
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <!--
+      properties
+    -->
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\BuildInfo.cs">
+      <DependentUpon>BuildInfo.t.cs</DependentUpon>
+      <Link>Properties\BuildInfo.cs</Link>
+    </Compile>
+    <None Include="..\BuildInfo.t.cs">
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Link>Properties\BuildInfo.t.cs</Link>
+      <CompileOutput>BuildInfo.cs</CompileOutput>
+    </None>
+    <!--
+      sources
+    -->
     <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="$(RefDir)NUnit.props" />
-  <ItemGroup>
+    <!--
+      content
+    -->
     <None Include="tasks.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="test.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="template.expected.xml">
+    <None Include="template.expected.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="template.xml">
+    </None>
+    <None Include="template.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="Diff\Source\same.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Diff\Target\same.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Diff\Source\sameContent.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Diff\Target\sameContent.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+  <!--
+
+    Targets
+  -->
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .targets))\.targets" />
 </Project>

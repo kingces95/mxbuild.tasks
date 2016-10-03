@@ -3,17 +3,25 @@
   ToolsVersion="12.0" 
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
 >
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)\.., .props))\.props" />
   
   <!--
 
     Nuspec Dependencies
   -->
   <ItemGroup>
-    <!--
-    <NuspecDependency Include="[name]">
-      <Version>[version]</Version>
+    <!--<NuspecDependency Include="Dependency0">
+      <Version>Version0</Version>
     </NuspecDependency>
-    -->
+    <NuspecDependency Include="Dependency1">
+      <Version>Version1</Version>
+    </NuspecDependency>
+    <NuspecReference Include="Reverence0">
+      <Name>Name0</Name>
+    </NuspecReference>
+    <NuspecReference Include="Reverence1">
+      <Name>Name1</Name>
+    </NuspecReference>-->
   </ItemGroup>
 
   <!--

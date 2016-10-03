@@ -27,13 +27,8 @@
     <None Include="$(MSBuildThisFileDirectory)ref\NUnit.props" />
     <None Include="$(MSBuildThisFileDirectory)src\.props" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\Mxbuild.Debug.csproj" />
-    <None Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\Mxbuild.Debug.csproj.user" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks.test\Mxbuild.Tasks.Test.csproj" />
-    <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks.test\test.targets" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Mxbuild.Tasks.csproj" />
-    <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\tasks.props">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.gitignore" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.targets" />
@@ -91,34 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)src\AssemblyVersion.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\BuildInfo.tcs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\BuildInfo.t.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BuildInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks.test\Properties\AssemblyInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks.test\PublishTask.test.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\CreateNuspec.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\DumpTaskItems.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\GenerateAssemblyInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\Logger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\PublishTask.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\Shared.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\SwitchFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Legacy\WebCopy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Properties\AssemblyInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\nuspec.props" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\RegexMatches.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\RegexReplace.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\WriteLineToFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)doskey.txt" />
-    <Content Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\readme.txt" />
     <Content Include="$(MSBuildThisFileDirectory)sub\mxbuild\pack\nuspec.t.xml" />
     <Content Include="$(MSBuildThisFileDirectory)sub\mxbuild\shell\doskey.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\bin\Pack\Debug\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\bin\Pack\Release\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\obj\Pack\Debug\TempPE\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\obj\Pack\Release\TempPE\" />
   </ItemGroup>
 </Project>

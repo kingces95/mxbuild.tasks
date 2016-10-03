@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Build.Utilities;
-using Microsoft.Build.Framework;
-using System.IO;
-using System.Net;
+﻿using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
-using System.Diagnostics;
 
 namespace Mxbuild.Tasks {
     public class XamarinLogger : ILogger, IEventSource {

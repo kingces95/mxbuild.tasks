@@ -9,10 +9,17 @@
     Properties
   -->
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .pre.props))\.pre.props" />
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
+  <Import Project="Properties\.props" />
+  <!--
+  
+    Universal
+  -->
   <PropertyGroup>
     <ProjectGuid>{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}</ProjectGuid>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="Properties\.props" />
+  </ItemGroup>
   <!--
   
     None
@@ -25,9 +32,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Pack' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Pack' " />
   <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
-  <Import Project="nuspec.props" Condition=" '$(Plat)' == '$(PackPlatformId)' " />
-  <ItemGroup Condition="'$(Plat)' == '$(PackPlatformId)' ">
+  <ItemGroup Condition="'$(MetaPlatform)' == '$(PackPlatformId)' ">
     <SelfReference Include="$(DesktopLibraryPlatformId)" />
+    <!--
+      content
+    -->
+    <None Include="package.nuspec">
+      <CopyTargetName>$(NuspecName)</CopyTargetName>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Build\tasks.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <!--
   
@@ -35,11 +52,10 @@
   -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Desktop' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Desktop' " />
-  <!--
-  
-    References; Source
-  -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(MetaPlatform)'=='Desktop'">
+    <!--
+      references
+    -->
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
@@ -49,24 +65,37 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib" />
-  </ItemGroup>
-  <ItemGroup>
+    <!--
+      properties
+    -->
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\BuildInfo.cs">
+      <DependentUpon>BuildInfo.t.cs</DependentUpon>
+      <Link>Properties\BuildInfo.cs</Link>
+    </Compile>
+    <None Include="..\BuildInfo.t.cs">
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Link>Properties\BuildInfo.t.cs</Link>
+      <CompileOutput>BuildInfo.cs</CompileOutput>
+    </None>
+    <!--
+      sources
+    -->
     <Compile Include="Extensions.cs" />
     <Compile Include="AbstractTask.cs" />
-    <Compile Include="Tasks\ExpandXmlTemplate.cs" />
-    <Compile Include="Tasks\RegexReplace.cs" />
-    <Compile Include="Tasks\RegexMatches.cs" />
-    <Compile Include="Tasks\WriteLineToFile.cs" />
-    <Compile Include="Tasks\DumpTaskItems.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Tasks\CreateNuspec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="nuspec.props" />
-    <None Include="tasks.props">
+    <Compile Include="Tasks\CreateNuspec.cs" />
+    <Compile Include="Tasks\Diff.cs" />
+    <Compile Include="Tasks\DumpTaskItems.cs" />
+    <Compile Include="Tasks\ExpandXmlTemplate.cs" />
+    <Compile Include="Tasks\RegexMatches.cs" />
+    <Compile Include="Tasks\RegexReplace.cs" />
+    <Compile Include="Tasks\WriteLineToFile.cs" />
+    <None Include="Build\tasks.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <!--

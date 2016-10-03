@@ -35,7 +35,7 @@ namespace Xamarin.Forms.Build {
             return consoleLogger;
         }
 
-        public string Build(string target) {
+        public string Build(string target, Dictionary<string, string> properties = null) {
             var builder = new StringBuilder();
 
             var loggers = new List<ILogger>();
@@ -50,6 +50,11 @@ namespace Xamarin.Forms.Build {
             projectCollection.RegisterLoggers(loggers);
 
             var project = projectCollection.LoadProject(m_path);
+
+            if (properties != null) {
+                foreach (var property in properties)
+                    project.SetProperty(property.Key, property.Value);
+            }
 
             try {
                 project.Build(target);
@@ -78,6 +83,29 @@ namespace Xamarin.Forms.Build {
             actual = actual.Substring(actual.IndexOf("<")).Trim();
             var expected = File.ReadAllText("template.expected.xml");
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void DiffSame() {
+            var properties = new Dictionary<string, string>() {
+                ["SourceFiles"] = @"Diff\Source\Same.txt;Diff\Source\SameContent.txt;",
+                ["TargetFolder"] = @"Diff\Target\",
+            };
+
+            var msbuild = new Msbuild(ProjectFile, LoggerVerbosity.Detailed);
+            var actual = msbuild.Build("DiffFiles", properties);
+        }
+
+        [Test]
+        public void DiffContent() {
+            var properties = new Dictionary<string, string>() {
+                ["SourceFiles"] = @"Diff\Source\SameContent.txt",
+                ["TargetFiles"] = @"Diff\Target\SameContent.txt",
+                ["IgnoreLastWriteTime"] = @"true",
+            };
+
+            var msbuild = new Msbuild(ProjectFile, LoggerVerbosity.Detailed);
+            var actual = msbuild.Build("DiffFiles", properties);
         }
     }
 }

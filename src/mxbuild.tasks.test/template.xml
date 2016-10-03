@@ -6,9 +6,5 @@
     <attribute attribute="%(Attribute)" />
   </group>
   <group id="%(Items1.Identity)" />
-  <group id="%(Items2.Identity)">
-    <element>%(Element)</element>
-    <cdata><![CDATA[%(Cdata)]]></cdata>
-    <attribute attribute="%(Attribute)" />
-  </group>
+  <group id="%(Items2.Identity)" />
 </root>
