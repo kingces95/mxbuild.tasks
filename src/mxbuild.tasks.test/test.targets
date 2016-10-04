@@ -19,22 +19,26 @@
 
   <ItemGroup>
     <Items0 Include="identity 0.0">
-      <Element>element 0.0</Element>
+      <ElementA>elementA 0.0</ElementA>
+      <ElementB>elementB 0.0</ElementB>
       <Cdata>cdata 0.0</Cdata>
       <attribute>attribute 0.0</attribute>
     </Items0>
     <Items0 Include="identity 0.1">
-      <Element>element 0.1</Element>
+      <ElementA>elementA 0.1</ElementA>
+      <ElementB>elementB 0.1</ElementB>
       <Cdata>cdata 0.1</Cdata>
       <attribute>attribute 0.1</attribute>
     </Items0>
     <Items1 Include="identity 1.0">
-      <Element>element 10.0</Element>
+      <ElementA>elementA 1.0</ElementA>
+      <ElementB>elementB 1.0</ElementB>
       <Cdata>cdata 1.0</Cdata>
       <attribute>attribute 1.0</attribute>
     </Items1>
     <Items1 Include="identity 1.1">
-      <Element>element 1.1</Element>
+      <ElementA>elementA 1.1</ElementA>
+      <ElementB>elementB 1.1</ElementB>
       <Cdata>cdata 1.1</Cdata>
       <attribute>attribute 1.1</attribute>
     </Items1>

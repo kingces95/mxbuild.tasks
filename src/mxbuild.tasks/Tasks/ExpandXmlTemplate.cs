@@ -107,11 +107,8 @@ namespace Mxbuild.Tasks {
         private XAttribute CopyAndExpand(XAttribute attribute) {
             return new XAttribute(attribute.Name, Expand(attribute.Value));
         }
-        private string Expand(string value) {
-            var match = Regex.Match(value, @"%[(](?<first>\w*)([.](?<second>\w*))?[)]");
-            if (!match.Success)
-                return value;
-
+        private string Expand(string value) => Regex.Replace(value, @"%[(](?<first>\w*)([.](?<second>\w*))?[)]", Expand);
+        private string Expand(Match match) {
             var first = match.Groups["first"].Value;
             var second = match.Groups["second"].Value;
 

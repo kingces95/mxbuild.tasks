@@ -94,9 +94,6 @@
     <Compile Include="Tasks\RegexMatches.cs" />
     <Compile Include="Tasks\RegexReplace.cs" />
     <Compile Include="Tasks\WriteLineToFile.cs" />
-    <None Include="Build\tasks.props">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <!--
 

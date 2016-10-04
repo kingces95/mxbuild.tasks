@@ -15,16 +15,17 @@
     <requireLicenseAcceptance>$(NuspecRequireLicenseAcceptance)</requireLicenseAcceptance>
     <dependencies>
       <group>
-        <dependency id="%(NugetReference.Package)" version="%(Version)" />
+        <!--<dependency id="%(NugetReference.Package)" version="%(Version)" />-->
       </group>
     </dependencies>
     <references>
-      <group targetFramework="%(TargetResult.Filename)%(TargetResult.Extension)">
-        <reference file="%(TargetResult.Extension)" />
+      <group targetFramework="%(TargetResult.TargetFramework)">
+        <reference file="%(Filename)%(Extension)" />
       </group>
     </references>
   </metadata>
   <files>
-    <file src="**/*" target="." />
+    <file src="lib\**\*" target="lib" />
+    <file src="build\**\*" target="build" />
   </files>
 </package>

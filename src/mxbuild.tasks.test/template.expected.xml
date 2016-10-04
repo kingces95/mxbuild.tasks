@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <group id="identity 0.0">
-    <element>element 0.0</element>
+    <element>{'elementA 0.0' 'elementB 0.0'}</element>
     <cdata><![CDATA[cdata 0.0]]></cdata>
     <attribute attribute="attribute 0.0" />
   </group>
   <group id="identity 0.1">
-    <element>element 0.1</element>
+    <element>{'elementA 0.1' 'elementB 0.1'}</element>
     <cdata><![CDATA[cdata 0.1]]></cdata>
     <attribute attribute="attribute 0.1" />
   </group>
