@@ -79,6 +79,7 @@
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\shim\shim.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\shim\shim.proj" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\shim\shim.targets" />
+    <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\tasks.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.post.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.props" />
