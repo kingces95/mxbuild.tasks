@@ -65,8 +65,40 @@
     <Message Text="SameTargetFiles: @(SameTargetFiles)" />
     <Message Text="IsDifferent: $(IsDifferent)" />
   </Target>
-  
-  <Target Name="ExpandXmlTemplate" DependsOnTargets="Log" >
+
+  <Target Name="ExpandTemplateLineByLine" DependsOnTargets="Log" >
+    <PropertyGroup>
+      <TemplateText>$([System.IO.File]::ReadAllText("template.txt"))</TemplateText>
+    </PropertyGroup>
+
+    <!--find variables of form: %(Name)-->
+    <RegexMatches
+      Input="$(TemplateText)"
+      Pattern="(?&lt;=[%][(])\w*?(?=[.]\w*[)])"
+    >
+      <Output ItemName="Matches" TaskParameter="Matches" />
+    </RegexMatches>
+    <Message Text="Match: %(Matches.Identity)" />
+
+    <ItemGroup>
+      <Items Include="@(%(Matches.Identity))">
+        <__Name>%(Identity)</__Name>
+      </Items>
+    </ItemGroup>
+    <Message Text="Item: %(Items.__Name), Identity: %(Identity)" />
+
+    <ExpandTemplate
+      Input="$(TemplateText)"
+      Type="lineByLine"
+      Items="@(Items)"
+    >
+      <Output PropertyName="Expansion" TaskParameter="Result" />
+    </ExpandTemplate>
+
+    <Message Importance="high" Text="$(Expansion)"/>
+  </Target>
+
+  <Target Name="ExpandTemplateXml" DependsOnTargets="Log" >
     <PropertyGroup>
       <TemplateText>$([System.IO.File]::ReadAllText("template.xml"))</TemplateText>
     </PropertyGroup>
@@ -87,12 +119,13 @@
     </ItemGroup>
     <Message Text="Item: %(Items.__Name), Identity: %(Identity)" />
       
-    <ExpandXmlTemplate
+    <ExpandTemplate
       Input="$(TemplateText)"
+      Type="xml"
       Items="@(Items)"
     >
       <Output PropertyName="Expansion" TaskParameter="Result" />
-    </ExpandXmlTemplate>
+    </ExpandTemplate>
 
     <Message Importance="high" Text="$(Expansion)"/>
   </Target>

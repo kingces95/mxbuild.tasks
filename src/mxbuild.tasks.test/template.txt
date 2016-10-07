@@ -1,0 +1,8 @@
+Items0:
+Id=%(Items0.Identity), ElemA=%(ElementA), ElemB=%(ElementB)
+
+Items1:
+Id=%(Items1.Identity), ElemA=%(ElementA), ElemB=%(ElementB)
+
+Items:2
+Id=%(Items2.Identity), ElemA=%(ElementA), ElemB=%(ElementB)

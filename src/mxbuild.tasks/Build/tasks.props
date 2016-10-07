@@ -10,7 +10,7 @@
   <UsingTask TaskName="$(TaskRootNamespace)WriteTextToFile" AssemblyFile="$(TaskAssemblyPath)" />
 
   <UsingTask TaskName="$(TaskRootNamespace)Diff" AssemblyFile="$(TaskAssemblyPath)" />
-  <UsingTask TaskName="$(TaskRootNamespace)ExpandXmlTemplate" AssemblyFile="$(TaskAssemblyPath)" />
+  <UsingTask TaskName="$(TaskRootNamespace)ExpandTemplate" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)RegexMatches" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)RegexReplace" AssemblyFile="$(TaskAssemblyPath)" />
 </Project>

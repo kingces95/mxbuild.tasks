@@ -78,8 +78,16 @@ namespace Xamarin.Forms.Build {
         }
 
         [Test]
-        public void ExpandXmlTemplate() {
-            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(nameof(ExpandXmlTemplate));
+        public void ExpandTemplateLineByLine() {
+            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(nameof(ExpandTemplateLineByLine));
+            actual = actual.Substring(actual.IndexOf("Items0:")).Trim();
+            var expected = File.ReadAllText("template.expected.txt");
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ExpandTemplateXml() {
+            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(nameof(ExpandTemplateXml));
             actual = actual.Substring(actual.IndexOf("<")).Trim();
             var expected = File.ReadAllText("template.expected.xml");
             Assert.AreEqual(expected, actual);

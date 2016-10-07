@@ -1,0 +1,9 @@
+Items0:
+Id=identity 0.0, ElemA=elementA 0.0, ElemB=elementB 0.0
+Id=identity 0.1, ElemA=elementA 0.1, ElemB=elementB 0.1
+
+Items1:
+Id=identity 1.0, ElemA=elementA 1.0, ElemB=elementB 1.0
+Id=identity 1.1, ElemA=elementA 1.1, ElemB=elementB 1.1
+
+Items:2
