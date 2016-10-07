@@ -1,0 +1,6 @@
+version https://git-lfx.github.com/spec/v1
+hint Mxbuild.Tasks.0.2.2/lib/netstandard/Mxbuild.Tasks.dll
+oid sha256:d9af22860cb7f7b219f2ad4aa658cc72f9759d8ac71df2a8fa129151cb9d902a
+size 41984
+type archive
+url http://nuget.org/api/v2/package/Mxbuild.Tasks/0.2.2
