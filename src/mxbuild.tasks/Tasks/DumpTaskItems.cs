@@ -31,18 +31,26 @@ namespace Mxbuild.Tasks {
             "MSBuildSourceTargetName",
         };
 
-        static MessageImportance DefaultMessageImportance = MessageImportance.High;
+        static string DefaultMessageImportance = "high";
 
         public string Header { get; set; }
         public ITaskItem[] Items { get; set; }
         public bool ExcludeDefaultMetadata { get; set; }
         public bool ExcludeEmptyValues { get; set; }
+        public string Importance { get; set; }
 
         protected override void Run() {
-            Log.LogMessage(DefaultMessageImportance, Header);
+            if (Importance == null)
+                Importance = DefaultMessageImportance;
+            var importance = (MessageImportance)Enum.Parse(typeof(MessageImportance), Importance, ignoreCase: true);
+
+            if (Header == null)
+                Header = string.Empty;
+
+            Log.LogMessage(importance, Header);
 
             var indent = "";
-            if (Header != null)
+            if (string.IsNullOrEmpty(Header))
                 indent = "    ";
 
             if (Items == null)
@@ -52,7 +60,7 @@ namespace Mxbuild.Tasks {
 
             var items = Items;
             foreach (var item in items) {
-                Log.LogMessage(DefaultMessageImportance, $"{indent}{item.GetMetadata("Identity")}");
+                Log.LogMessage(importance, $"{indent}{item.GetMetadata("Identity")}");
 
                 foreach (string name in item.MetadataNames) {
                     if (ExcludeDefaultMetadata && DefaultMetadataNames.Contains(name))
@@ -62,7 +70,7 @@ namespace Mxbuild.Tasks {
                     if (ExcludeEmptyValues && string.IsNullOrEmpty(value))
                         continue;
 
-                    Log.LogMessage(DefaultMessageImportance, $"{indent}{indent}{name}: {value}");
+                    Log.LogMessage(importance, $"{indent}{indent}{name}: {value}");
                 }
             }
         }

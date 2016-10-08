@@ -1,17 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Xml;
-using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using NUnit.Framework;
+using System.Reflection;
+using System;
+
+[assembly: GrabBag("MyStr", "MyObj", 42, IProp = 40, ObjProp = "MyObjProp", StrProp = "MyStrProp")]
+
+internal class GrabBagAttribute : Attribute {
+    public GrabBagAttribute(string str, object obj, int i) { }
+    public string StrProp;
+    public object ObjProp;
+    public int IProp;
+}
 
 namespace Xamarin.Forms.Build {
+
     public class Msbuild {
         LoggerVerbosity m_verbosity;
         string m_path;
@@ -75,6 +82,17 @@ namespace Xamarin.Forms.Build {
         public void Empty() {
             var result = new Msbuild(ProjectFile).Build(nameof(Empty));
             StringAssert.Contains(Success, result);
+        }
+
+        [Test]
+        public void GetAssemblyAttribute() {
+            var result = new Msbuild(ProjectFile).Build(
+                target: nameof(GetAssemblyAttribute), 
+                properties: new Dictionary<string, string>() {
+                    ["AssemblyPath"] = Assembly.GetExecutingAssembly().Location,
+                    ["AttributeName"] = nameof(GrabBagAttribute),
+                }
+            );
         }
 
         [Test]

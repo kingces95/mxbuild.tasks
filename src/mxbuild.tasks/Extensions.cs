@@ -18,5 +18,14 @@ namespace Mxbuild.Tasks {
                 dir = dir + Path.DirectorySeparatorChar;
             return dir;
         }
+        public static string ToUpperFirst(this string value) {
+            if (value == null)
+                return null;
+
+            if (value.Length == 1)
+                return value.ToUpper();
+
+            return value.ToUpper()[0] + value.Substring(1);
+        }
     }
 }

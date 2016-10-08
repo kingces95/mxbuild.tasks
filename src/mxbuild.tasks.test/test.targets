@@ -66,6 +66,21 @@
     <Message Text="IsDifferent: $(IsDifferent)" />
   </Target>
 
+  <Target Name="GetAssemblyAttribute" DependsOnTargets="Log" >
+    <GetAssemblyAttribute
+      AssemblyPath="$(AssemblyPath)"
+      AttributeName="$(AttributeName)"
+    >
+      <Output ItemName="Attribute" TaskParameter="Result" />
+    </GetAssemblyAttribute>
+
+    <DumpTaskItems
+      Items="@(Attribute)"
+      ExcludeDefaultMetadata="true"
+      ExcludeEmptyValues="true"
+    />
+  </Target>
+
   <Target Name="ExpandTemplateLineByLine" DependsOnTargets="Log" >
     <PropertyGroup>
       <TemplateText>$([System.IO.File]::ReadAllText("template.txt"))</TemplateText>

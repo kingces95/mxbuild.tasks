@@ -95,6 +95,7 @@
     <Compile Include="Tasks\RegexMatches.cs" />
     <Compile Include="Tasks\RegexReplace.cs" />
     <Compile Include="Tasks\WriteLineToFile.cs" />
+    <Compile Include="Tasks\GetAssemblyAttribute.cs" />
   </ItemGroup>
   <!--
 
