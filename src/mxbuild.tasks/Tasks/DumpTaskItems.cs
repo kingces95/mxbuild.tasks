@@ -10,6 +10,9 @@ using System.Diagnostics;
 
 namespace Mxbuild.Tasks {
     public sealed class DumpTaskItems : AbstractTask {
+        private const string DefaultMessageImportance = "high";
+        private const string Indent = "  ";
+
         public static string[] DefaultMetadataNames = new[] {
             "FullPath",
             "RootDir",
@@ -31,8 +34,6 @@ namespace Mxbuild.Tasks {
             "MSBuildSourceTargetName",
         };
 
-        static string DefaultMessageImportance = "high";
-
         public string Header { get; set; }
         public ITaskItem[] Items { get; set; }
         public bool ExcludeDefaultMetadata { get; set; }
@@ -50,8 +51,8 @@ namespace Mxbuild.Tasks {
             Log.LogMessage(importance, Header);
 
             var indent = "";
-            if (string.IsNullOrEmpty(Header))
-                indent = "    ";
+            if (!string.IsNullOrEmpty(Header))
+                indent = Indent;
 
             if (Items == null)
                 return;
@@ -70,7 +71,7 @@ namespace Mxbuild.Tasks {
                     if (ExcludeEmptyValues && string.IsNullOrEmpty(value))
                         continue;
 
-                    Log.LogMessage(importance, $"{indent}{indent}{name}: {value}");
+                    Log.LogMessage(importance, $"{indent}{Indent}{name}: {value}");
                 }
             }
         }

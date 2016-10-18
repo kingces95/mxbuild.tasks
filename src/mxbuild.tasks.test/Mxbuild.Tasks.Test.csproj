@@ -103,6 +103,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="groupTemplate.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="template.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

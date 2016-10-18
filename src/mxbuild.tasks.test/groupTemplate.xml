@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <element A="%(Data.A)" B="%(B)">
+    <element C="%(C)">
+      <element D="%(D)" >%(E)</element>
+    </element>
+  </element>
+  <element A="%(NoSuchItemGroup.A)" >%(B)</element>
+</root>

@@ -7,14 +7,27 @@ using Microsoft.Build.Logging;
 using NUnit.Framework;
 using System.Reflection;
 using System;
+using Mxbuild.Tasks;
 
 [assembly: GrabBag("MyStr", "MyObj", 42, IProp = 40, ObjProp = "MyObjProp", StrProp = "MyStrProp")]
+[assembly: GrabBag2("gb2")]
+[assembly: NugetReference("Foo", "1", TargetFramework = "x")]
+[assembly: NugetReference("Bar", "2", TargetFramework = "y")]
+[assembly: NugetReference("Baz", "3", TargetFramework = "z")]
 
+[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+internal class NugetReferenceAttribute : Attribute {
+    public NugetReferenceAttribute(string id, string version) { }
+    public string TargetFramework;
+}
 internal class GrabBagAttribute : Attribute {
     public GrabBagAttribute(string str, object obj, int i) { }
     public string StrProp;
     public object ObjProp;
     public int IProp;
+}
+internal class GrabBag2Attribute : Attribute {
+    public GrabBag2Attribute(string other) { }
 }
 
 namespace Xamarin.Forms.Build {
@@ -85,30 +98,76 @@ namespace Xamarin.Forms.Build {
         }
 
         [Test]
-        public void GetAssemblyAttribute() {
+        public void AddAssemblyAttribute() {
+
+            var thisAssembly = Assembly.GetExecutingAssembly().Location;
+
             var result = new Msbuild(ProjectFile).Build(
-                target: nameof(GetAssemblyAttribute), 
+                target: nameof(AddAssemblyAttribute),
                 properties: new Dictionary<string, string>() {
-                    ["AssemblyPath"] = Assembly.GetExecutingAssembly().Location,
-                    ["AttributeName"] = nameof(GrabBagAttribute),
+                    ["Assembly"] = $"{thisAssembly};{thisAssembly}",
+                }
+            );
+        }
+
+        [Test]
+        public void GetAssemblyAttribute() {
+
+            var thisAssembly = Assembly.GetExecutingAssembly().Location;
+
+            var result = new Msbuild(ProjectFile).Build(
+                target: nameof(GetAssemblyAttribute),
+                properties: new Dictionary<string, string>() {
+                    ["Assembly"] = $"{thisAssembly};{thisAssembly}",
                 }
             );
         }
 
         [Test]
         public void ExpandTemplateLineByLine() {
-            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(nameof(ExpandTemplateLineByLine));
-            actual = actual.Substring(actual.IndexOf("Items0:")).Trim();
+            var actual = ExpandTemplateXml(
+                "template.expected.txt", 
+                type: ExpandTemplateType.LineByLine, 
+                sort: false, 
+                token: "Items0:"
+            );
             var expected = File.ReadAllText("template.expected.txt");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void ExpandTemplateXml() {
-            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(nameof(ExpandTemplateXml));
-            actual = actual.Substring(actual.IndexOf("<")).Trim();
+            var actual = ExpandTemplateXml(
+                "template.expected.xml", 
+                sort: false
+            );
             var expected = File.ReadAllText("template.expected.xml");
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ExpandGroupTemplateXml() {
+            var actual = ExpandTemplateXml(
+                "groupTemplate.xml", 
+                sort: true
+            );
+        }
+
+        private string ExpandTemplateXml(
+            string path,
+            ExpandTemplateType type = ExpandTemplateType.Xml,
+            bool sort = false, 
+            string token = "<") {
+
+            var actual = new Msbuild(ProjectFile, LoggerVerbosity.Minimal).Build(
+                target: "ExpandTemplate",
+                properties: new Dictionary<string, string>() {
+                    ["TemplatePath"] = $"{path}",
+                    ["TemplateType"] = $"{type}",
+                    ["TemplateSort"] = $"{sort}",
+                }
+            );
+            return actual.Substring(actual.IndexOf(token)).Trim();
         }
 
         [Test]

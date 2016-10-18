@@ -7,9 +7,178 @@ using System.Xml;
 using System;
 
 namespace Mxbuild.Tasks {
-    internal class EmptyItemsException : Exception { }
+    using TaskItemGroup = IGrouping<GroupingTuple, ITaskItem>;
 
-    internal enum ExpandTemplateType {
+    internal sealed class GroupingTuple : 
+        IComparable<GroupingTuple>,
+        IEquatable<GroupingTuple> {
+
+        internal static readonly GroupingTuple Empty = new GroupingTuple(false);
+        internal static readonly GroupingTuple EmptyCaseInsensitive = new GroupingTuple(true);
+
+        private interface IDimension : IComparable, IEquatable<IDimension> {
+            object Value { get; }
+        }
+        private struct Dimension<T> :
+            IDimension, 
+            IEquatable<Dimension<T>>,
+            IComparable<Dimension<T>> {
+
+            private string m_name;
+            private IEqualityComparer<string> m_keyEqualityComparer;
+
+            private T m_value;
+            private IComparer<T> m_valueComparer;
+            private IEqualityComparer<T> m_valueEqualityComparer;
+
+            public Dimension(
+                T value, 
+                string name,
+                IEqualityComparer<string> keyEqualityComparer,
+                IComparer<T> valueComparer, 
+                IEqualityComparer<T> valueEqualityComparer) {
+
+                m_value = value;
+                m_name = name;
+                m_keyEqualityComparer = keyEqualityComparer;
+                m_valueComparer = valueComparer;
+                m_valueEqualityComparer = valueEqualityComparer;
+            }
+
+            public object Value => m_value;
+
+            public int CompareTo(Dimension<T> other) {
+                if (other.m_keyEqualityComparer != m_keyEqualityComparer)
+                    throw new InvalidOperationException("Key equality comparerer mismatch.");
+
+                if (other.m_valueEqualityComparer != m_valueEqualityComparer)
+                    throw new InvalidOperationException("Value equality comparer mismatch.");
+
+                if (other.m_valueComparer != m_valueComparer)
+                    throw new InvalidOperationException("Value comparer mismatch.");
+
+                if (!m_keyEqualityComparer.Equals(m_name, other.m_name))
+                    throw new InvalidOperationException($"Key mismatch; Expected '{m_name}'=='{other.m_name}'.");
+
+                return m_valueComparer.Compare(m_value, other.m_value);
+            }
+            public int CompareTo(object obj) {
+                if (!(obj is Dimension<T>))
+                    throw new InvalidOperationException();
+
+                return CompareTo((Dimension<T>)obj);
+            }
+            public override bool Equals(object obj) => obj is Dimension<T> ? Equals((Dimension<T>)obj) : false;
+            public bool Equals(Dimension<T> other) => CompareTo(other) == 0;
+            public bool Equals(IDimension other) {
+                if (!(other is Dimension<T>))
+                    return false;
+
+                return Equals((Dimension<T>)other);
+            }
+            public override int GetHashCode() => m_valueEqualityComparer.GetHashCode(m_value);
+            public override string ToString() => $"{m_name}={m_value}";
+        }
+
+        private List<IDimension> m_dimensions;
+        private Dictionary<string, int> m_dimensionByName;
+
+        private GroupingTuple() { }
+        private GroupingTuple(bool caseInsensitive) {
+            m_dimensions = new List<IDimension>();
+            m_dimensionByName = new Dictionary<string, int>(
+                caseInsensitive ?
+                    (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase :
+                    EqualityComparer<string>.Default
+            );
+        }
+
+        public GroupingTuple AddDimension(
+            string value,
+            string name,
+            bool caseInsensitive = false) {
+
+            var valueComparer = caseInsensitive ?
+                StringComparer.InvariantCultureIgnoreCase :
+                StringComparer.InvariantCulture;
+
+            var valueEqualityComparer = caseInsensitive ?
+                (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase :
+                EqualityComparer<string>.Default;
+
+            return AddDimension<string>(value, name, valueComparer, valueEqualityComparer);
+        }
+        public GroupingTuple AddDimension<T>(
+            T value, 
+            string name, 
+            IComparer<T> valueComparer = null,
+            IEqualityComparer<T> valueEqualityComparer = null) {
+
+            var result = new GroupingTuple {
+                m_dimensions = new List<IDimension>(m_dimensions),
+                m_dimensionByName = new Dictionary<string, int>(
+                    m_dimensionByName, 
+                    m_dimensionByName.Comparer
+                )
+            };
+
+            if (result.m_dimensionByName.ContainsKey(name))
+                throw new Exception($"Tuple already contains dimension named '{name}'.");
+
+            if (valueComparer == null)
+                valueComparer = Comparer<T>.Default;
+
+            if (valueEqualityComparer == null)
+                valueEqualityComparer = EqualityComparer<T>.Default;
+
+            result.m_dimensionByName[name] = result.m_dimensions.Count;
+            result.m_dimensions.Add(
+                new Dimension<T>(
+                    value, 
+                    name, 
+                    m_dimensionByName.Comparer, 
+                    valueComparer,
+                    valueEqualityComparer
+                )
+            );
+
+            return result;
+        }
+        public int Count => m_dimensions.Count;
+        public bool ContainsKey(string name) => m_dimensionByName.ContainsKey(name);
+        public object this[int index] => m_dimensions[index]?.Value;
+        public object this[string name] => this[m_dimensionByName[name]];
+
+        public int CompareTo(GroupingTuple other) {
+            var zip = m_dimensions.Zip(other.m_dimensions, (X, Y) => new { X, Y });
+            foreach (var pair in zip) {
+                var x = pair.X;
+                var y = pair.Y;
+
+                var result = x.CompareTo(y);
+                if (result != 0)
+                    return result;
+            }
+
+            if (Count == other.Count)
+                return 0;
+
+            return Count < other.Count ? -1 : 1;
+        }
+        public bool Equals(GroupingTuple other) {
+            if (other == null)
+                return false;
+
+            return CompareTo(other) == 0;
+        }
+        public override bool Equals(object obj) => Equals(obj as GroupingTuple);
+        public override int GetHashCode() => m_dimensions.Aggregate(0, (a, o) => a ^ o.GetHashCode());
+        public override string ToString() {
+            return $"<{string.Join(",", m_dimensions)}>";
+        }
+    }
+
+    public enum ExpandTemplateType {
         Xml,
         LineByLine,
     }
@@ -23,10 +192,10 @@ namespace Mxbuild.Tasks {
             var type = (ExpandTemplateType)Enum.Parse(typeof(ExpandTemplateType), Type, ignoreCase: true);
 
             if (type == ExpandTemplateType.Xml)
-                Result = new ExpandTemplateXml(items).Run(Input);
+                Result = new ExpandTemplateXml(items, Sort).Run(Input);
 
             else if (type == ExpandTemplateType.LineByLine)
-                Result = new ExpandTemplateLineByLine(items).Run(Input);
+                Result = new ExpandTemplateLineByLine(items, Sort).Run(Input);
 
             else
                 throw new Exception($"Type '{Type}' is unrecognized.");
@@ -41,147 +210,154 @@ namespace Mxbuild.Tasks {
         [Required]
         public ITaskItem[] Items { get; set; }
 
+        public bool Sort { get; set; }
+
         [Output]
         public string Result { get; set; }
     }
 
     internal abstract class ExpandTemplateBase {
         private const string ItemMetadataRegex = @"%[(](?<first>\w*)([.](?<second>\w*))?[)]";
+        private struct RegexMatch {
+            internal readonly string First;
+            internal readonly string Second;
 
-        private ILookup<string, ITaskItem> m_items;
-        private string m_itemName;
-        private ITaskItem m_item;
-        private Queue<ITaskItem> m_itemQueue;
-        private Stack<object> m_debug = new Stack<object>();
+            internal RegexMatch(Match match) {
+                First = match.Groups["first"].Value;
+                Second = match.Groups["second"].Value;
 
-        internal ExpandTemplateBase(ILookup<string, ITaskItem> items) {
-            m_items = items;
-        }
-
-        private string Expand(Match match) {
-            var first = match.Groups["first"].Value;
-            var second = match.Groups["second"].Value;
-
-            // %(metadataName)
-            var metadataName = first;
-
-            // %(itemName.metadataName)
-            if (!string.IsNullOrEmpty(second)) {
-                var itemName = first;
-                metadataName = second;
-
-                // first iteration of an item
-                if (m_itemName == null) {
-                    m_itemName = first;
-
-                    m_itemQueue = new Queue<ITaskItem>();
-                    foreach (var o in m_items[itemName])
-                        m_itemQueue.Enqueue(o);
-
-                    if (!m_itemQueue.Any())
-                        throw new EmptyItemsException();
-
-                    m_item = m_itemQueue.Dequeue();
-                }
-
-                // detected nested item names
-                else if (m_itemName != itemName)
-                    throw new Exception(
-                        $"While expanding '{m_itemName}' encountered nested expansion '{itemName}'.");
+                if (string.IsNullOrEmpty(Second))
+                    Second = null;
             }
 
-            // substitute variable with metadata
-            return m_item.GetMetadata(metadataName);
+            public override string ToString() {
+                if (Second == null)
+                    return $"{First}";
+
+                return $"{First}.{Second}";
+            }
         }
 
-        internal string Expand(string value) => Regex.Replace(value, ItemMetadataRegex, Expand);
-        internal IEnumerable<object> ExpandMany(object template) {
-            m_debug.Push(template);
+        private static TaskItemGroup[] DefaultGroup = new ITaskItem[] { null }.GroupBy(o => GroupingTuple.EmptyCaseInsensitive).ToArray();
+        internal static TaskItemGroup DefaultGroupSingleton = DefaultGroup.Single();
 
-            var isExpanding = m_itemQueue != null;
+        private ILookup<string, ITaskItem> m_itemsByName;
+        private bool m_sort;
 
-            while (true) {
-                object result;
-
-                try {
-                    result = Expand(template);
-                } catch (EmptyItemsException) {
-                    break;
-                }
-
-                yield return result;
-
-                if (isExpanding || m_itemQueue == null || !m_itemQueue.Any())
-                    break;
-
-                m_item = m_itemQueue.Dequeue();
-            }
-
-            if (!isExpanding) {
-                m_itemQueue = null;
-                m_item = null;
-                m_itemName = null;
-            }
-
-            m_debug.Pop();
+        internal ExpandTemplateBase(ILookup<string, ITaskItem> itemsByName, bool sort) {
+            m_itemsByName = itemsByName;
+            m_sort = sort;
         }
 
-        internal abstract object Expand(object template);
+        internal string Expand(GroupingTuple tuple, string input) {
+            return Regex.Replace(input, ItemMetadataRegex, o => {
+                var match = new RegexMatch(o);
+
+                var name = match.Second ?? match.First;
+                var value = tuple[name];
+
+                return $"{value}";
+            });
+        }
+        internal IEnumerable<TaskItemGroup> Group(TaskItemGroup grouping, IEnumerable<string> inputs) {
+
+            // find all $(itemGroup.metadata) and $(metadata) patterns
+            var matches = (
+                from input in inputs
+                from Match match in Regex.Matches(input, ItemMetadataRegex)
+                select new RegexMatch(match)
+            ).ToList();
+
+            // any patterns found?
+            if (matches.Count == 0)
+                return DefaultGroup;
+
+            // group items in grouping into sub groups by similar metadata values
+            if (grouping != DefaultGroupSingleton) {
+
+                var group = grouping.GroupBy(item => {
+                    var tuple = grouping.Key;
+                    foreach (var match in matches) {
+                        var metadataName = match.Second ?? match.First;
+                        var metadataValue = item.GetMetadata(metadataName);
+                        tuple = tuple.AddDimension(metadataValue, metadataName, caseInsensitive: true);
+                    }
+                    return tuple;
+                });
+
+                if (m_sort)
+                    group = group.OrderBy(o => o.Key);
+
+                return group.ToList();
+            }
+
+            // more than one ItemGroup name specified?
+            var groups = matches.Where(o => o.Second != null).GroupBy(o => o.First).ToList();
+            if (groups.Count == 0)
+                throw new Exception(
+                    $"No ItemGroup specified. Only the following metadata names: {string.Join(", ", matches.Select(o => o.First))}");
+            if (groups.Count > 1)
+                throw new Exception(
+                    $"Unexpected nesting of ItemGroup names: {string.Join(" > ", groups.Select(o => o.Key))}");
+            var itemGroupName = groups.Single().Key;
+
+            // named ItemGroup exists?
+            if (!m_itemsByName.Contains(itemGroupName))
+                return Enumerable.Empty<TaskItemGroup>();
+            var items = m_itemsByName[itemGroupName];
+
+            // group items in ItemGroup by similar metadata values
+            return Group(
+                grouping: items.GroupBy(o => GroupingTuple.EmptyCaseInsensitive).Single(),
+                inputs: inputs
+            );
+        } 
     }
 
     internal sealed class ExpandTemplateLineByLine : ExpandTemplateBase {
 
-        internal ExpandTemplateLineByLine(ILookup<string, ITaskItem> items) : base(items) { }
+        internal ExpandTemplateLineByLine(ILookup<string, ITaskItem> items, bool sort) : base(items, sort) { }
 
         internal string Run(string input) {
-            var lines = Regex.Split(input, Environment.NewLine).SelectMany(o => ExpandMany(o)).Cast<string>();
+            var lines =
+                from line in Regex.Split(input, Environment.NewLine)
+                from grp in Group(DefaultGroupSingleton, new[] { line })
+                select Expand(grp?.Key, (string)line);
+
             return string.Join(Environment.NewLine, lines.ToArray());
         }
-
-        internal override object Expand(object line) => Expand((string)line);
     }
 
     internal sealed class ExpandTemplateXml : ExpandTemplateBase {
 
-        internal ExpandTemplateXml(ILookup<string, ITaskItem> items) : base(items) { }
+        internal ExpandTemplateXml(ILookup<string, ITaskItem> items, bool sort) : base(items, sort) { }
 
         internal string Run(string input) {
-            var doc = Expand(XDocument.Parse(input));
+            var doc = Expand(DefaultGroupSingleton, XDocument.Parse(input));
             return doc.Declaration.ToString() + Environment.NewLine + doc.ToString();
         }
 
-        internal override object Expand(object template) {
-            var element = (XElement)template;
-
-            return new XElement(element.Name,
-                new object[] {
-                    Expand(element.Attributes()),
-                    Expand(element.Nodes())
-                }
-            );
-        }
-
-        private object Expand(XObject node) {
+        private object Expand(TaskItemGroup items, XObject node) {
             var type = node.NodeType;
 
             switch (type) {
                 case XmlNodeType.Element:
-                    return ExpandMany(node);
+                    return Expand(items, (XElement)node);
 
                 case XmlNodeType.Attribute:
-                    return Expand((XAttribute)node);
+                    return Expand(items, (XAttribute)node);
 
                 case XmlNodeType.Document:
-                    return Expand((XDocument)node);
+                    return Expand(items, (XDocument)node);
 
                 case XmlNodeType.Text:
-                    return Expand((XText)node);
+                    return Expand(items, (XText)node);
 
                 case XmlNodeType.CDATA:
-                    return Expand((XCData)node);
+                    return Expand(items, (XCData)node);
 
                 case XmlNodeType.Comment:
-                    return Expand((XComment)node);
+                    return Expand(items, (XComment)node);
 
                 case XmlNodeType.Whitespace:
                 case XmlNodeType.SignificantWhitespace:
@@ -201,11 +377,43 @@ namespace Mxbuild.Tasks {
                         $"Unexpected node type '{type}' encountered during expansion.");
             }
         }
-        private object Expand(IEnumerable<XObject> nodes) => nodes.Select(o => Expand(o));
-        private XDocument Expand(XDocument document) => new XDocument(document.Declaration, Expand(document.Nodes()));
-        private XComment Expand(XComment comment) => new XComment(Expand(comment.Value));
-        private XText Expand(XText text) => new XText(Expand(text.Value));
-        private XCData Expand(XCData cdata) => new XCData(Expand(cdata.Value));
-        private XAttribute Expand(XAttribute attribute) => new XAttribute(attribute.Name, Expand(attribute.Value));
+        private IEnumerable<string> ElementText(XElement element) {
+            foreach (var attribute in element.Attributes())
+                yield return attribute.Value;
+
+            foreach (var text in element.Nodes().OfType<XText>())
+                yield return text.Value;
+
+            foreach (var comment in element.Nodes().OfType<XComment>())
+                yield return comment.Value;
+        }
+        private IEnumerable<object> Expand(TaskItemGroup items, XElement element) {
+            return Group(items, ElementText(element)).Select(group => 
+                new XElement(element.Name,
+                    new object[] {
+                        Expand(group, element.Attributes()),
+                        Expand(group, element.Nodes())
+                    }
+                )
+            );
+        }
+        private object Expand(TaskItemGroup items, IEnumerable<XObject> nodes) {
+            return nodes.Select(o => Expand(items, o));
+        }
+        private XDocument Expand(TaskItemGroup items, XDocument document) {
+            return new XDocument(document.Declaration, Expand(items, document.Nodes()));
+        }
+        private XComment Expand(TaskItemGroup items, XComment comment) {
+            return new XComment(Expand(items?.Key, comment.Value));
+        }
+        private XText Expand(TaskItemGroup items, XText text) {
+            return new XText(Expand(items?.Key, text.Value));
+        }
+        private XCData Expand(TaskItemGroup items, XCData cdata) {
+            return new XCData(Expand(items?.Key, cdata.Value));
+        }
+        private XAttribute Expand(TaskItemGroup items, XAttribute attribute) {
+            return new XAttribute(attribute.Name, Expand(items?.Key, attribute.Value));
+        }
     }
 }

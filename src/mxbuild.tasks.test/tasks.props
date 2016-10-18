@@ -9,6 +9,7 @@
   <UsingTask TaskName="$(TaskRootNamespace)DumpTaskItems" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)WriteTextToFile" AssemblyFile="$(TaskAssemblyPath)" />
 
+  <UsingTask TaskName="$(TaskRootNamespace)AddAssemblyAttribute" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)GetAssemblyAttribute" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)Diff" AssemblyFile="$(TaskAssemblyPath)" />
   <UsingTask TaskName="$(TaskRootNamespace)ExpandTemplate" AssemblyFile="$(TaskAssemblyPath)" />

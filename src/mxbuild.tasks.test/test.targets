@@ -43,7 +43,7 @@
       <attribute>attribute 1.1</attribute>
     </Items1>
   </ItemGroup>
-
+  
   <Target Name="DiffFiles" DependsOnTargets="Log" >
     <Diff 
       SourceFiles="$(SourceFiles)" 
@@ -66,56 +66,115 @@
     <Message Text="IsDifferent: $(IsDifferent)" />
   </Target>
 
-  <Target Name="GetAssemblyAttribute" DependsOnTargets="Log" >
-    <GetAssemblyAttribute
-      AssemblyPath="$(AssemblyPath)"
-      AttributeName="$(AttributeName)"
+  <Target Name="AddAssemblyAttribute" DependsOnTargets="Log" >
+    <ItemGroup>
+      <AttributeMap Include="GrabBagAttribute">
+        <Str>Str</Str>
+        <Obj>ObjAlias</Obj>
+        <IProp/>
+      </AttributeMap>
+      <AttributeMap Include="GrabBag2Attribute">
+        <Other/>
+      </AttributeMap>
+      <Assembly Include="$(Assembly)" >
+        <Foo>bar</Foo>
+      </Assembly>
+    </ItemGroup>
+    
+    <AddAssemblyAttribute
+      Assemblies="@(Assembly)"
+      Attributes="@(AttributeMap)"
     >
-      <Output ItemName="Attribute" TaskParameter="Result" />
+      <Output ItemName="Result" TaskParameter="Result" />
+    </AddAssemblyAttribute>
+
+    <ItemGroup>
+      <Assembly Remove="@(Assembly)"/>
+      <Assembly Include="@(Result)"/>
+    </ItemGroup>
+    
+    <Message Importance="high" Text="Result:"/>
+    <DumpTaskItems
+      Items="@(Assembly)"
+      ExcludeDefaultMetadata="true"
+      ExcludeEmptyValues="true"
+    />
+  </Target>
+  
+  <Target Name="GetAssemblyAttribute" DependsOnTargets="Log" >
+    <ItemGroup>
+      <AttributeMap Include="NugetReferenceAttribute">
+        <Id>Identity</Id>
+        <Version>MyVersion</Version>
+        <TargetFramework/>
+      </AttributeMap>
+    </ItemGroup>
+    
+    <GetAssemblyAttribute
+      Assemblies="$(Assembly)"
+      Attribute="@(AttributeMap)"
+    >
+      <Output ItemName="Result" TaskParameter="Result" />
     </GetAssemblyAttribute>
 
+    <Message Importance="high" Text="Result:"/>
     <DumpTaskItems
-      Items="@(Attribute)"
+      Items="@(Result)"
       ExcludeDefaultMetadata="true"
       ExcludeEmptyValues="true"
     />
   </Target>
 
-  <Target Name="ExpandTemplateLineByLine" DependsOnTargets="Log" >
+  <ItemGroup>
+    <Data Include="c">
+      <A>0</A>
+      <B>1</B>
+      <C>0</C>
+      <D>0</D>
+      <E>0</E>
+    </Data>
+    <Data Include="d">
+      <A>0</A>
+      <B>1</B>
+      <C>0</C>
+      <D>1</D>
+      <E>0</E>
+    </Data>
+    <Data Include="d">
+      <A>0</A>
+      <B>1</B>
+      <C>0</C>
+      <D>0</D>
+      <E>1</E>
+    </Data>
+    <Data Include="e">
+      <A>0</A>
+      <B>1</B>
+      <C>1</C>
+      <D>0</D>
+      <E>0</E>
+    </Data>
+    <Data Include="a">
+      <A>0</A>
+      <B>0</B>
+      <C>0</C>
+      <D>0</D>
+      <E>0</E>
+    </Data>
+    <Data Include="a-duplicate">
+      <A>0</A>
+      <B>0</B>
+      <C>0</C>
+      <D>0</D>
+      <E>0</E>
+    </Data>
+  </ItemGroup>
+
+  <Target Name="ExpandTemplate" DependsOnTargets="Log" >
     <PropertyGroup>
-      <TemplateText>$([System.IO.File]::ReadAllText("template.txt"))</TemplateText>
-    </PropertyGroup>
-
-    <!--find variables of form: %(Name)-->
-    <RegexMatches
-      Input="$(TemplateText)"
-      Pattern="(?&lt;=[%][(])\w*?(?=[.]\w*[)])"
-    >
-      <Output ItemName="Matches" TaskParameter="Matches" />
-    </RegexMatches>
-    <Message Text="Match: %(Matches.Identity)" />
-
-    <ItemGroup>
-      <Items Include="@(%(Matches.Identity))">
-        <__Name>%(Identity)</__Name>
-      </Items>
-    </ItemGroup>
-    <Message Text="Item: %(Items.__Name), Identity: %(Identity)" />
-
-    <ExpandTemplate
-      Input="$(TemplateText)"
-      Type="lineByLine"
-      Items="@(Items)"
-    >
-      <Output PropertyName="Expansion" TaskParameter="Result" />
-    </ExpandTemplate>
-
-    <Message Importance="high" Text="$(Expansion)"/>
-  </Target>
-
-  <Target Name="ExpandTemplateXml" DependsOnTargets="Log" >
-    <PropertyGroup>
-      <TemplateText>$([System.IO.File]::ReadAllText("template.xml"))</TemplateText>
+      <TemplateText>$([System.IO.File]::ReadAllText($(TemplatePath)))</TemplateText>
+      <TemplateType Condition="'$(TemplateType)'==''">xml</TemplateType>
+      <TemplateSort Condition="'$(TemplateSort)'==''">false</TemplateSort>
     </PropertyGroup>
 
     <!--find variables of form: %(Name)-->
@@ -136,7 +195,8 @@
       
     <ExpandTemplate
       Input="$(TemplateText)"
-      Type="xml"
+      Type="$(TemplateType)"
+      Sort="$(TemplateSort)"
       Items="@(Items)"
     >
       <Output PropertyName="Expansion" TaskParameter="Result" />
@@ -144,5 +204,5 @@
 
     <Message Importance="high" Text="$(Expansion)"/>
   </Target>
-  
+ 
 </Project>
