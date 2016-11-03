@@ -12,15 +12,18 @@
     <None Include="$(MSBuildThisFileDirectory).gitattributes" />
     <None Include="$(MSBuildThisFileDirectory).gitignore" />
     <None Include="$(MSBuildThisFileDirectory).gitmodules" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\packages\Mxbuild.Tasks.0.2.2" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\packages\NUnit.2.6.4" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\packages\NUnit.Runners.2.6.4" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\tools\git" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\tools\sysInternals" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\tools\touch.exe" />
+    <None Include="$(MSBuildThisFileDirectory).lfx\tools\nuget.exe" />
     <None Include="$(MSBuildThisFileDirectory).pre.props" />
     <None Include="$(MSBuildThisFileDirectory).props" />
     <None Include="$(MSBuildThisFileDirectory).version" />
     <None Include="$(MSBuildThisFileDirectory).targets" />
     <None Include="$(MSBuildThisFileDirectory)build.bat" />
-    <None Include="$(MSBuildThisFileDirectory)dls\.gitattributes" />
-    <None Include="$(MSBuildThisFileDirectory)dls\packages\.gitignore" />
-    <None Include="$(MSBuildThisFileDirectory)dls\packages\.lfxconfig" />
-    <None Include="$(MSBuildThisFileDirectory)dls\packages\packages.config" />
     <None Include="$(MSBuildThisFileDirectory)env.lnk" />
     <None Include="$(MSBuildThisFileDirectory)LICENSE" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
@@ -29,6 +32,7 @@
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.debug\Mxbuild.Debug.csproj" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks.test\Mxbuild.Tasks.Test.csproj" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Mxbuild.Tasks.csproj" />
+    <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\nuspec.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.gitignore" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.targets" />
@@ -55,7 +59,6 @@
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\nuget\nuget.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\nuget\nuget.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\nuget\nuget.targets" />
-    <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\nuspec.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\pack\pack.build.targets" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\pack\pack.post.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\pack\pack.pre.props" />
@@ -84,11 +87,6 @@
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)src\AssemblyVersion.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\BuildInfo.t.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\BuildInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)doskey.txt" />

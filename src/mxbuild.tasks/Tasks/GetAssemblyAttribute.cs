@@ -170,6 +170,13 @@ namespace Mxbuild.Tasks {
 
         private const string Identity = nameof(Identity);
 
+        internal static Dictionary<string, string> ToDictionary(this ITaskItem item) {
+            return item.MetadataNames.Cast<string>().ToDictionary(
+                keySelector: name => name, 
+                elementSelector: name => item.GetMetadata(name),
+                comparer: StringComparer.InvariantCultureIgnoreCase
+            );
+        }
         internal static ITaskItem ToTaskItem(this Dictionary<string, string> dictionary) {
             string identity;
             if (!dictionary.TryGetValue(Identity, out identity))
@@ -212,21 +219,29 @@ namespace Mxbuild.Tasks {
         }
     }
 
+    /// <summary>
+    /// Return a TaskItem for each assembly. Resulting TaskItems start off as clones of
+    /// the assembly. The Attribute input contains a list of TaskItem whose identities
+    /// are the name of attributes to find on the assemblies. Each metadata name is a 
+    /// property on the attribute whose value will be added to the result with a name 
+    /// equal to the value of the metadata.
+    /// </summary>
     public sealed class AddAssemblyAttribute : AbstractTask {
 
         protected override void Run() {
-            var result = new Dictionary<object, ITaskItem>();
-            Assemblies.JoinAttributes(Attributes,
-                (a, o, n, v) => {
-                    ITaskItem assembly;
-                    if (!result.TryGetValue(a, out assembly))
-                        result[a] = assembly = new TaskItem(a);
+            var results = new Dictionary<object, ITaskItem>();
 
-                    assembly.SetMetadata(n, v);
+            Assemblies.JoinAttributes(Attributes,
+                (assembly, attribute, name, value) => {
+                    ITaskItem result;
+                    if (!results.TryGetValue(assembly, out result))
+                        results[assembly] = result = new TaskItem(assembly);
+
+                    result.SetMetadata(name, value);
                 }
             );
 
-            Result = result.Values.ToArray();
+            Result = results.Values.ToArray();
         }
 
         [Required]
@@ -239,24 +254,33 @@ namespace Mxbuild.Tasks {
         public ITaskItem[] Result { get; set; }
     }
 
+    /// <summary>
+    /// Return a TaskItem for each attribute applied to to each assembly. Resulting
+    /// TaskItems start off as clones of the assembly in which the attribute was discovered.
+    /// The Attribute input contains a TaskItem whose identity is the attribute to find 
+    /// and each metadata name is a property on the attribute whose value will be added 
+    /// to the result with a name equal to the value of the metadata.
+    /// </summary>
     public sealed class GetAssemblyAttribute : AbstractTask {
 
         protected override void Run() {
-            var result = new Dictionary<object, Dictionary<string, string>>();
+            var results = new Dictionary<object, Dictionary<string, string>>();
 
             if (Attribute.Length != 1)
                 throw new Exception($"Expected a single attribute but received {Attribute.Length}.");
 
-            Assemblies.JoinAttributes(Attribute, (a, o, n, v) => {
-                Dictionary<string, string> attribute;
-                if (!result.TryGetValue(o, out attribute))
-                    result[o] = attribute =
-                        new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            Assemblies.JoinAttributes(Attribute, (assembly, attribute, name, value) => {
 
-                attribute[n] = v;
+                // try get existing result to which to add name/value
+                Dictionary<string, string> result;
+                if (!results.TryGetValue(attribute, out result))
+                    // add name/value pairs to cloned assembly
+                    results[attribute] = result = assembly.ToDictionary();
+
+                result[name] = value;
             });
 
-            Result = result.Values.Select(o => o.ToTaskItem()).ToArray();
+            Result = results.Values.Select(o => o.ToTaskItem()).ToArray();
         }
 
 

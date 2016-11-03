@@ -18,30 +18,30 @@ Global
 		mxbuild.projitems*{7dc1069b-ac9a-4ef9-94c5-4da4473016d1}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|NetStandard = Debug|NetStandard
 		Debug|Pack = Debug|Pack
-		Debug|Portable = Debug|Portable
+		Release|NetStandard = Release|NetStandard
 		Release|Pack = Release|Pack
-		Release|Portable = Release|Portable
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|NetStandard.ActiveCfg = Debug|NetStandard
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|NetStandard.Build.0 = Debug|NetStandard
 		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Pack.ActiveCfg = Debug|Pack
 		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Pack.Build.0 = Debug|Pack
-		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Portable.ActiveCfg = Debug|NetStandard
-		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Debug|Portable.Build.0 = Debug|NetStandard
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|NetStandard.ActiveCfg = Release|NetStandard
+		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|NetStandard.Build.0 = Release|NetStandard
 		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Pack.ActiveCfg = Release|Pack
 		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Pack.Build.0 = Release|Pack
-		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Portable.ActiveCfg = Release|NetStandard
-		{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}.Release|Portable.Build.0 = Release|NetStandard
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|NetStandard.ActiveCfg = Debug|[None]
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|Pack.ActiveCfg = Debug|[None]
-		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Debug|Portable.ActiveCfg = Debug|[None]
+		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|NetStandard.ActiveCfg = Release|[None]
 		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Pack.ActiveCfg = Release|[None]
-		{5920E95B-2329-470E-9EA6-7131BB2AA95A}.Release|Portable.ActiveCfg = Release|[None]
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|NetStandard.ActiveCfg = Debug|NetStandard
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|NetStandard.Build.0 = Debug|NetStandard
 		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Pack.ActiveCfg = Debug|[None]
-		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Portable.ActiveCfg = Debug|NetStandard
-		{C4C3E202-9A8A-4424-9167-514101DB2459}.Debug|Portable.Build.0 = Debug|NetStandard
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|NetStandard.ActiveCfg = Release|NetStandard
+		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|NetStandard.Build.0 = Release|NetStandard
 		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Pack.ActiveCfg = Release|[None]
-		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Portable.ActiveCfg = Release|NetStandard
-		{C4C3E202-9A8A-4424-9167-514101DB2459}.Release|Portable.Build.0 = Release|NetStandard
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

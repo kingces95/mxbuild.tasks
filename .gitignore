@@ -1,6 +1,7 @@
 .vs
 *.user
 *.tmp
+lfx
 bld
 drp
 trash

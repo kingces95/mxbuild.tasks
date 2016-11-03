@@ -106,7 +106,7 @@ namespace Mxbuild.Tasks {
                 (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase :
                 EqualityComparer<string>.Default;
 
-            return AddDimension<string>(value, name, valueComparer, valueEqualityComparer);
+            return AddDimension(value, name, valueComparer, valueEqualityComparer);
         }
         public GroupingTuple AddDimension<T>(
             T value, 
@@ -125,20 +125,14 @@ namespace Mxbuild.Tasks {
             if (result.m_dimensionByName.ContainsKey(name))
                 throw new Exception($"Tuple already contains dimension named '{name}'.");
 
-            if (valueComparer == null)
-                valueComparer = Comparer<T>.Default;
-
-            if (valueEqualityComparer == null)
-                valueEqualityComparer = EqualityComparer<T>.Default;
-
             result.m_dimensionByName[name] = result.m_dimensions.Count;
             result.m_dimensions.Add(
                 new Dimension<T>(
                     value, 
                     name, 
                     m_dimensionByName.Comparer, 
-                    valueComparer,
-                    valueEqualityComparer
+                    valueComparer ?? Comparer<T>.Default,
+                    valueEqualityComparer ?? EqualityComparer<T>.Default
                 )
             );
 
@@ -261,7 +255,7 @@ namespace Mxbuild.Tasks {
         }
         internal IEnumerable<TaskItemGroup> Group(TaskItemGroup grouping, IEnumerable<string> inputs) {
 
-            // find all $(itemGroup.metadata) and $(metadata) patterns
+            // find all %(itemGroup.metadata) and %(metadata) patterns
             var matches = (
                 from input in inputs
                 from Match match in Regex.Matches(input, ItemMetadataRegex)
@@ -291,11 +285,11 @@ namespace Mxbuild.Tasks {
                 return group.ToList();
             }
 
-            // more than one ItemGroup name specified?
+            // more than one ItemGroup name specified? e.g. "%(name0.metadata) %(name1.metadata)"
             var groups = matches.Where(o => o.Second != null).GroupBy(o => o.First).ToList();
             if (groups.Count == 0)
                 throw new Exception(
-                    $"No ItemGroup specified. Only the following metadata names: {string.Join(", ", matches.Select(o => o.First))}");
+                    $"No ItemGroup specified (e.g. \"%(name.metadata)\"). Only the following metadata names: {string.Join(", ", matches.Select(o => $"%({o.First})"))}");
             if (groups.Count > 1)
                 throw new Exception(
                     $"Unexpected nesting of ItemGroup names: {string.Join(" > ", groups.Select(o => o.Key))}");

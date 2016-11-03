@@ -27,6 +27,21 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|[None]' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|[None]' " />
   <!--
+
+    Library
+  -->
+  <ItemGroup Condition="'$(IsLibraryPlatform)'=='true'">
+    <Compile Include="$(ExtIdDir)BuildInfo.cs">
+      <DependentUpon>BuildInfo.t.cs</DependentUpon>
+      <Link>Properties\BuildInfo.cs</Link>
+    </Compile>
+    <None Include="$(ExtIdDir)BuildInfo.t.cs">
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Link>Properties\BuildInfo.t.cs</Link>
+      <CompileOutput>BuildInfo.cs</CompileOutput>
+    </None>
+  </ItemGroup>
+  <!--
   
     Desktop
   -->
@@ -54,21 +69,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <!--
-      properties
-    -->
-    <Compile Include="..\AssemblyVersion.cs">
-      <Link>Properties\AssemblyVersion.cs</Link>
-    </Compile>
-    <Compile Include="..\BuildInfo.cs">
-      <DependentUpon>BuildInfo.t.cs</DependentUpon>
-      <Link>Properties\BuildInfo.cs</Link>
-    </Compile>
-    <None Include="..\BuildInfo.t.cs">
-      <IsMxbuildTemplate>true</IsMxbuildTemplate>
-      <Link>Properties\BuildInfo.t.cs</Link>
-      <CompileOutput>BuildInfo.cs</CompileOutput>
-    </None>
     <!--
       sources
     -->
