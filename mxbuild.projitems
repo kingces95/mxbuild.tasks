@@ -12,13 +12,10 @@
     <None Include="$(MSBuildThisFileDirectory).gitattributes" />
     <None Include="$(MSBuildThisFileDirectory).gitignore" />
     <None Include="$(MSBuildThisFileDirectory).gitmodules" />
-    <None Include="$(MSBuildThisFileDirectory).lfx\packages\Mxbuild.Tasks.0.2.7" />
     <None Include="$(MSBuildThisFileDirectory).lfx\packages\NUnit.2.6.4" />
     <None Include="$(MSBuildThisFileDirectory).lfx\packages\NUnit.Runners.2.6.4" />
-    <None Include="$(MSBuildThisFileDirectory).lfx\tools\git" />
     <None Include="$(MSBuildThisFileDirectory).lfx\tools\sysInternals" />
     <None Include="$(MSBuildThisFileDirectory).lfx\tools\touch.exe" />
-    <None Include="$(MSBuildThisFileDirectory).lfx\tools\nuget.exe" />
     <None Include="$(MSBuildThisFileDirectory).pre.props" />
     <None Include="$(MSBuildThisFileDirectory).props" />
     <None Include="$(MSBuildThisFileDirectory).version" />
@@ -34,6 +31,9 @@
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\Mxbuild.Tasks.csproj" />
     <None Include="$(MSBuildThisFileDirectory)src\mxbuild.tasks\nuspec.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.gitignore" />
+    <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.lfx\packages\Mxbuild.Tasks.0.2.7" />
+    <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.lfx\tools\git" />
+    <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\.lfx\tools\nuget.exe" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\clean\clean.targets" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\common.pre.props" />
@@ -87,6 +87,7 @@
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.pre.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.props" />
     <None Include="$(MSBuildThisFileDirectory)sub\mxbuild\xf\xf.targets" />
+    <None Include="$(MSBuildThisFileDirectory)tasks.props" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)doskey.txt" />
