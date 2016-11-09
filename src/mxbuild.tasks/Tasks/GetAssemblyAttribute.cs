@@ -5,6 +5,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
+using Mono.Cecil;
 
 namespace Mxbuild.Tasks {
 
@@ -12,20 +14,20 @@ namespace Mxbuild.Tasks {
         private AttributeInfo m_info;
         private Dictionary<string, AttributeValue> m_values;
 
-        internal Attribute(CustomAttributeData data) {
+        internal Attribute(CustomAttribute data) {
             var ctor = data.Constructor;
             m_info = new AttributeInfo(ctor.DeclaringType.Name);
 
-            m_values = data.ConstructorArguments.Zip(ctor.GetParameters(), (a, p) => new {
+            m_values = data.ConstructorArguments.Zip(ctor.Parameters, (a, p) => new {
                 Name = p.Name.ToUpperFirst(),
-                Type = a.ArgumentType,
+                Type = a.Type,
                 Value = a.Value
-            }).Concat(data.NamedArguments.Select(o => new {
-                Name = o.MemberInfo.Name,
-                Type = o.TypedValue.ArgumentType,
-                Value = o.TypedValue.Value
+            }).Concat(data.Properties.Select(o => new {
+                Name = o.Name,
+                Type = o.Argument.Type,
+                Value = o.Argument.Value
             })).ToDictionary(o => o.Name, o =>
-                new AttributeValue(new AttributeProperty(m_info, o.Name), this, o.Type, o.Value)
+                new AttributeValue(new AttributeProperty(m_info, o.Name), this, Type.GetType(o.Type.FullName), o.Value)
             );
         }
 
@@ -159,14 +161,6 @@ namespace Mxbuild.Tasks {
     }
 
     internal static class AttributeExtensions {
-        static AttributeExtensions() {
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ReflectionOnlyAssemblyResolve;
-        }
-        private static Assembly ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args) {
-            var name = args.Name;
-            try { return Assembly.LoadFrom(name); } 
-            catch { return null; }
-        }
 
         private const string Identity = nameof(Identity);
 
@@ -187,13 +181,19 @@ namespace Mxbuild.Tasks {
 
             return new TaskItem(identity, dictionary);
         }
-        internal static IEnumerable<Attribute> GetAssemblyAttributes(this ITaskItem item) {
+        internal static IEnumerable<Attribute> GetAssemblyAttributes(this ITaskItem item, HashSet<string> attributeNames) {
             var path = item.GetMetadata(Identity);
-            var assembly = Assembly.LoadFile(path);
 
-            return assembly
-                .GetCustomAttributesData().Select(o => new Attribute(o))
-                .ToArray();
+            var assemblyDef = AssemblyDefinition.ReadAssembly(path);
+
+            var result = (
+                from attributeName in attributeNames
+                from attribute in assemblyDef.CustomAttributes
+                where attributeNames.Contains(attribute.AttributeType.Name)
+                select new Attribute(attribute)
+            ).ToList();
+
+            return result;
         }
 
         internal static void JoinAttributes(
@@ -201,11 +201,14 @@ namespace Mxbuild.Tasks {
             ITaskItem[] attributeItems,
             Action<ITaskItem, Attribute, string, string> action) {
 
+            var aliases = AttributeAlias.CreateMany(attributeItems).ToList();
+            var attributeNames = new HashSet<string>(aliases.GroupBy(o => o.Info.Name).Select(o => o.Key));
+
             foreach (var o in
                 from assembly in assemblyItems
-                from attribute in assembly.GetAssemblyAttributes()
+                from attribute in assembly.GetAssemblyAttributes(attributeNames)
                 from value in attribute.Values()
-                join alias in AttributeAlias.CreateMany(attributeItems) 
+                join alias in aliases
                     on value.Property equals alias.Property
                 select new {
                     Assembly = assembly,

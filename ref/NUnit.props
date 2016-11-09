@@ -6,7 +6,7 @@
   <PropertyGroup>
     <NugetNunitVersion>2.6.4</NugetNunitVersion>
   </PropertyGroup>
-  <Import Project="$(PkgDir)NUnit.$(NugetNunitVersion)\shim.props"/>
+  <Import Project="$(PkgDir)NUnit.$(NugetNunitVersion)\lib\package.props"/>
 
   <ItemGroup>
     <NugetPackage Include="NUnit.Runners">

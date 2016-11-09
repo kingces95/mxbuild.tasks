@@ -3,6 +3,7 @@
   <PropertyGroup>
     <MetaProjectGuid>{657066BF-EE56-4AF3-9A8F-D57D03251392}</MetaProjectGuid>
     <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <!--
   

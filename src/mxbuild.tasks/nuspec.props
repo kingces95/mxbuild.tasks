@@ -29,7 +29,7 @@
   -->
   <PropertyGroup>
     <NuspecReleaseNotes>
-      <![CDATA[]]>
+      <![CDATA[Use Mono.Cecil to load assembly attributes.]]>
     </NuspecReleaseNotes>
   </PropertyGroup>
 </Project>

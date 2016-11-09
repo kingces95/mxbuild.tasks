@@ -3,6 +3,7 @@
   <PropertyGroup>
     <MetaProjectGuid>{31928A03-4286-4294-B986-D31B43B5342F}</MetaProjectGuid>
     <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <!--
   
@@ -16,8 +17,11 @@
   -->
   <PropertyGroup>
     <ProjectGuid>{8E9C4286-1AFB-48A6-AB17-180E14F47A9E}</ProjectGuid>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="nuspec.props" />
+    <None Include="packages.config" />
     <None Include="Properties\.props" />
   </ItemGroup>
   <!--
@@ -30,8 +34,8 @@
   
     Nuget Pack
   -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Pack' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Pack' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Pack' "/>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Pack' "/>
   <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
   <ItemGroup Condition="'$(MetaPlatform)' == '$(PackPlatformId)' ">
     <SelfReference Include="$(PortablePlatformId)" />
@@ -77,8 +81,11 @@
   
     Desktop
   -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|NetStandard' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|NetStandard' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|NetStandard' "/>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|NetStandard' "/>
+  <ImportGroup Condition="'$(MetaPlatform)'=='$(NetStandardLibraryPlatformId)'">
+    <Import Project="$(RefDir)Mono.Cecil.props" />
+  </ImportGroup>
   <ItemGroup Condition="'$(MetaPlatform)'=='$(NetStandardLibraryPlatformId)'">
     <!--
       references
