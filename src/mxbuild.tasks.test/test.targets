@@ -70,14 +70,14 @@
     <ItemGroup>
       <AttributeMap Include="GrabBagAttribute">
         <Str>Str</Str>
-        <Obj>ObjAlias</Obj>
+        <ObjAlias>${Obj}</ObjAlias>
         <IProp/>
       </AttributeMap>
       <AttributeMap Include="GrabBag2Attribute">
         <Other/>
       </AttributeMap>
       <Assembly Include="$(Assembly)" >
-        <Foo>bar</Foo>
+        <Bar>${Foo}</Bar>
       </Assembly>
     </ItemGroup>
     
@@ -104,15 +104,16 @@
   <Target Name="GetAssemblyAttribute" DependsOnTargets="Log" >
     <ItemGroup>
       <AttributeMap Include="NugetReferenceAttribute">
-        <Id>Identity</Id>
-        <Version>MyVersion</Version>
-        <TargetFramework/>
+        <MyVersion>${Version}</MyVersion>
+        <TargetFramework>${TargetFramework}</TargetFramework>
+        <Assembly>%{Identity}</Assembly>
       </AttributeMap>
     </ItemGroup>
     
     <GetAssemblyAttribute
       Assemblies="$(Assembly)"
       Attribute="@(AttributeMap)"
+      Identity="${Id}"
     >
       <Output ItemName="Result" TaskParameter="Result" />
     </GetAssemblyAttribute>

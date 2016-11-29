@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 using Mono.Cecil;
+using System.Text.RegularExpressions;
+using Microsoft.Build.Execution;
 
 namespace Mxbuild.Tasks {
 
@@ -23,6 +25,10 @@ namespace Mxbuild.Tasks {
                 Type = a.Type,
                 Value = a.Value
             }).Concat(data.Properties.Select(o => new {
+                Name = o.Name,
+                Type = o.Argument.Type,
+                Value = o.Argument.Value
+            })).Concat(data.Fields.Select(o => new {
                 Name = o.Name,
                 Type = o.Argument.Type,
                 Value = o.Argument.Value
@@ -126,38 +132,54 @@ namespace Mxbuild.Tasks {
 
         public override string ToString() => $"{Property}={Value}";
     }
-    internal struct AttributeAlias {
-        internal static IEnumerable<AttributeAlias> CreateMany(ITaskItem[] items) {
-            foreach (var item in items) {
-                var info = new AttributeInfo(item.GetMetadata("Identity"));
+    internal struct TaskItemValueTemplate {
+        private const string IdentityName = "Identity";
 
-                foreach (string name in item.MetadataNames) {
+        internal static IEnumerable<TaskItemValueTemplate> CreateMany(ITaskItem[] items, string identityFormat = null) {
+            foreach (var item in items) {
+                var attribute = new AttributeInfo(item.GetMetadata("Identity"));
+
+                if (identityFormat != null)
+                    yield return new TaskItemValueTemplate(attribute, IdentityName, identityFormat);
+
+                foreach (string name in item.CloneCustomMetadata().Keys) {
                     if (string.Equals(name, "Identity", StringComparison.CurrentCultureIgnoreCase))
                         continue;
 
-                    yield return new AttributeAlias(
-                        new AttributeProperty(info, name),
-                        item.GetMetadata(name)
+                    var format = item.GetMetadata(name);
+                    yield return new TaskItemValueTemplate(
+                        attribute,
+                        name,
+                        format
                     );
                 }
             }
         }
 
-        private AttributeProperty m_property;
-        private string m_alias;
+        private AttributeInfo m_attribute;
+        private string m_name;
+        private string m_value;
 
-        internal AttributeAlias(AttributeProperty property, string alias) {
-            m_property = property;
-            m_alias = alias;
+        internal TaskItemValueTemplate(AttributeInfo attribute, string name, string value) {
+            m_attribute = attribute;
+            m_name = name;
+            m_value = value;
         }
 
-        public AttributeInfo Info => m_property.Info;
-        public AttributeProperty Property => m_property;
-        public bool HasAlias => !string.IsNullOrEmpty(Alias);
-        public string Alias => m_alias;
-        public string Name => HasAlias ? m_alias : m_property.Name;
+        public AttributeInfo AttributeInfo => m_attribute;
+        public string Value => m_value;
+        public string Name => m_name;
 
-        public override string ToString() => HasAlias ? $"{m_property} -> {Alias}" : $"m_info";
+        public string Expand(ITaskItem context, Attribute attribute) {
+            var value = m_value;
+            foreach (var pair in attribute.Values())
+                value = Regex.Replace(value, $"[$]{{{pair.Name}}}", pair.Value, RegexOptions.IgnoreCase);
+            foreach (var pair in context.MetadataNames.Cast<string>().Select(o => new { Name = o, Value = context.GetMetadata(o) }))
+                value = Regex.Replace(value, $"%{{{pair.Name}}}", pair.Value, RegexOptions.IgnoreCase);
+            return value;
+        }
+
+        public override string ToString() => $"{m_attribute}.{m_name} -> {m_value}";
     }
 
     internal static class AttributeExtensions {
@@ -166,30 +188,30 @@ namespace Mxbuild.Tasks {
 
         internal static Dictionary<string, string> ToDictionary(this ITaskItem item) {
             return item.MetadataNames.Cast<string>().ToDictionary(
-                keySelector: name => name, 
+                keySelector: name => name,
                 elementSelector: name => item.GetMetadata(name),
                 comparer: StringComparer.InvariantCultureIgnoreCase
             );
         }
         internal static ITaskItem ToTaskItem(this Dictionary<string, string> dictionary) {
             string identity;
-            if (!dictionary.TryGetValue(Identity, out identity))
-                throw new Exception($"Cannot convert dictionary to TaskItem without identity.");
+            if (!dictionary.TryGetValue(Identity, out identity) || string.IsNullOrEmpty(identity))
+                throw new Exception($"Cannot convert dictionary to TaskItem without 'Identity'.");
 
             dictionary = new Dictionary<string, string>(dictionary);
             dictionary.Remove(Identity);
 
             return new TaskItem(identity, dictionary);
         }
-        internal static IEnumerable<Attribute> GetAssemblyAttributes(this ITaskItem item, HashSet<string> attributeNames) {
+        internal static IEnumerable<Attribute> GetAssemblyAttributes(this ITaskItem item, HashSet<AttributeInfo> attributeInfos) {
             var path = item.GetMetadata(Identity);
 
             var assemblyDef = AssemblyDefinition.ReadAssembly(path);
 
             var result = (
-                from attributeName in attributeNames
+                from attributeInfo in attributeInfos
                 from attribute in assemblyDef.CustomAttributes
-                where attributeNames.Contains(attribute.AttributeType.Name)
+                where attributeInfos.Contains(new AttributeInfo(attribute.AttributeType.Name))
                 select new Attribute(attribute)
             ).ToList();
 
@@ -199,25 +221,23 @@ namespace Mxbuild.Tasks {
         internal static void JoinAttributes(
             this ITaskItem[] assemblyItems,
             ITaskItem[] attributeItems,
-            Action<ITaskItem, Attribute, string, string> action) {
+            Action<ITaskItem, Attribute, TaskItemValueTemplate> action,
+            string identityFormat = null) {
 
-            var aliases = AttributeAlias.CreateMany(attributeItems).ToList();
-            var attributeNames = new HashSet<string>(aliases.GroupBy(o => o.Info.Name).Select(o => o.Key));
+            var formats = TaskItemValueTemplate.CreateMany(attributeItems, identityFormat).ToList();
+            var attributeInfos = new HashSet<AttributeInfo>(formats.GroupBy(o => o.AttributeInfo).Select(o => o.Key));
 
             foreach (var o in
                 from assembly in assemblyItems
-                from attribute in assembly.GetAssemblyAttributes(attributeNames)
-                from value in attribute.Values()
-                join alias in aliases
-                    on value.Property equals alias.Property
+                from attribute in assembly.GetAssemblyAttributes(attributeInfos)
+                join format in formats on attribute.Info equals format.AttributeInfo
                 select new {
                     Assembly = assembly,
                     Attrbute = attribute,
-                    alias.Name,
-                    value.Value
+                    Format = format,
                 }
             ) {
-                action(o.Assembly, o.Attrbute, o.Name, o.Value);
+                action(o.Assembly, o.Attrbute, o.Format);
             }
         }
     }
@@ -232,15 +252,15 @@ namespace Mxbuild.Tasks {
     public sealed class AddAssemblyAttribute : AbstractTask {
 
         protected override void Run() {
-            var results = new Dictionary<object, ITaskItem>();
+            var results = Assemblies.ToDictionary(o => o, o => (ITaskItem)new TaskItem(o));
 
             Assemblies.JoinAttributes(Attributes,
-                (assembly, attribute, name, value) => {
+                (assembly, attribute, template) => {
                     ITaskItem result;
                     if (!results.TryGetValue(assembly, out result))
                         results[assembly] = result = new TaskItem(assembly);
 
-                    result.SetMetadata(name, value);
+                    result.SetMetadata(template.Name, template.Expand(assembly, attribute));
                 }
             );
 
@@ -267,25 +287,27 @@ namespace Mxbuild.Tasks {
     public sealed class GetAssemblyAttribute : AbstractTask {
 
         protected override void Run() {
-            var results = new Dictionary<object, Dictionary<string, string>>();
+            var results = new Dictionary<Attribute, Dictionary<string, string>>();
 
             if (Attribute.Length != 1)
                 throw new Exception($"Expected a single attribute but received {Attribute.Length}.");
 
-            Assemblies.JoinAttributes(Attribute, (assembly, attribute, name, value) => {
+            Assemblies.JoinAttributes(Attribute, (assembly, attribute, template) => {
 
-                // try get existing result to which to add name/value
-                Dictionary<string, string> result;
-                if (!results.TryGetValue(attribute, out result))
-                    // add name/value pairs to cloned assembly
-                    results[attribute] = result = assembly.ToDictionary();
+                // try get existing assembly clone to which to add/update values
+                Dictionary<string, string> item;
+                if (!results.TryGetValue(attribute, out item))
+                    // clone assembly
+                    results[attribute] = item = assembly.ToDictionary();
 
-                result[name] = value;
-            });
+                item[template.Name] = template.Expand(assembly, attribute);
+            }, Identity);
 
             Result = results.Values.Select(o => o.ToTaskItem()).ToArray();
         }
 
+        [Required]
+        public string Identity { get; set; }
 
         [Required]
         public ITaskItem[] Assemblies { get; set; }
